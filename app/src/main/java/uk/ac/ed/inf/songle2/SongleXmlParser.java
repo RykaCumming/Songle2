@@ -49,13 +49,16 @@ public class SongleXmlParser {
     }
 
     public static class Entry {
+        public final String number;
+        public final String artist;
         public final String title;
         public final String link;
-        public final String summary;
 
-        private Entry(String title, String summary, String link) {
+        private Entry(String number,String artist,String title, String link) {
+            this.artist = artist;
             this.title = title;
-            this.summary = summary;
+
+            this.number = number;
             this.link = link;
         }
     }
@@ -64,8 +67,9 @@ public class SongleXmlParser {
 // to their respective "read" methods for processing. Otherwise, skips the tag.
     private Entry readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, ns, "entry");
+        String number = null;
+        String artist = null;
         String title = null;
-        String summary = null;
         String link = null;
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -74,15 +78,17 @@ public class SongleXmlParser {
             String name = parser.getName();
             if (name.equals("title")) {
                 title = readTitle(parser);
-            } else if (name.equals("summary")) {
-                summary = readSummary(parser);
+            } else if (name.equals("number")) {
+                number = readNumber(parser);
             } else if (name.equals("link")) {
                 link = readLink(parser);
+            } else if (name.equals("artist")) {
+                artist = readArtist(parser);
             } else {
                 skip(parser);
             }
         }
-        return new Entry(title, summary, link);
+        return new Entry(number,artist,title,link);
     }
 
     // Processes title tags in the feed.
@@ -110,12 +116,20 @@ public class SongleXmlParser {
     }
 
     // Processes summary tags in the feed.
-    private String readSummary(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "summary");
-        String summary = readText(parser);
-        parser.require(XmlPullParser.END_TAG, ns, "summary");
-        return summary;
+    private String readArtist(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "artist");
+        String artist = readText(parser);
+        parser.require(XmlPullParser.END_TAG, ns, "artist");
+        return artist;
     }
+    // Processes summary tags in the feed.
+    private String readNumber(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "number");
+        String number = readText(parser);
+        parser.require(XmlPullParser.END_TAG, ns, "number");
+        return number;
+    }
+
 
     // For the tags title and summary, extracts their text values.
     private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {

@@ -2,6 +2,10 @@ package uk.ac.ed.inf.songle2;
 
 import android.net.NetworkInfo;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.UnsupportedEncodingException;
+
 /**
  * Created by s1540547 on 17/10/17.
  */
@@ -19,7 +23,7 @@ public interface DownloadCallback<T> {
      * Indicates that the callback handler needs to update its appearance or information based on
      * the result of the task. Expected to be called from the main thread.
      */
-    void updateFromDownload(String result);
+    void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException;
 
     /**
      * Get the device's active network status in the form of a NetworkInfo object.

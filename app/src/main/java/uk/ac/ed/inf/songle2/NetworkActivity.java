@@ -47,12 +47,16 @@ import android.webkit.WebView;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -94,8 +98,16 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
     }
 
     @Override
-    public void updateFromDownload(String result) {
-        Log.i("NetworkActivity",result);
+    public void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException  {
+        SongleXmlParser songleXmlParser =new SongleXmlParser();
+        InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8.name()));
+        try {
+            ArrayList<SongleXmlParser.Entry> entrys = (ArrayList<SongleXmlParser.Entry>) songleXmlParser.parse(stream);
+            Log.e("",entrys.get(0).artist);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.e("NetworkActivity",result);
     }
 
     @Override

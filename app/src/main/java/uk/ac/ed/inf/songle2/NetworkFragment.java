@@ -23,6 +23,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -155,7 +157,13 @@ public class NetworkFragment extends Fragment {
                         (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
                                 && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
                     // If no connectivity, cancel task and update Callback with null data.
-                    mCallback.updateFromDownload(null);
+                    try {
+                        mCallback.updateFromDownload(null);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (XmlPullParserException e) {
+                        e.printStackTrace();
+                    }
                     cancel(true);
                 }
             }
@@ -193,9 +201,21 @@ public class NetworkFragment extends Fragment {
             if (result != null && mCallback != null) {
                 if (result.mException != null) {
                     Log.e("aisojd","oaoisjd");
-                    mCallback.updateFromDownload(result.mException.getMessage());
+                    try {
+                        mCallback.updateFromDownload(result.mException.getMessage());
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (XmlPullParserException e) {
+                        e.printStackTrace();
+                    }
                 } else if (result.mResultValue != null) {
-                    mCallback.updateFromDownload(result.mResultValue);
+                    try {
+                        mCallback.updateFromDownload(result.mResultValue);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (XmlPullParserException e) {
+                        e.printStackTrace();
+                    }
                 }
                 mCallback.finishDownloading();
             }
