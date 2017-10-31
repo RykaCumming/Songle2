@@ -1,17 +1,24 @@
 package uk.ac.ed.inf.songle2;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-//import com.google.android.gms.location.LocationListener;
-//import com.google.android.gms.location.LocationRequest;
-//import com.google.android.gms.location.LocationServices;
+
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.location.LocationServices;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,9 +37,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mLastLocation;
     private static final String TAG ="MapsActivity";
 
- //   public MapsActivity() {
- //   }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        Log.i(TAG, "OnCreate");
     }
     /**
     @Override
@@ -57,7 +62,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
+*/
+
     protected void createLocationRequest() {
+        Log.i(TAG,"OnLocationRequest");
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(1000);
@@ -69,8 +77,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
-    @Override
+
+//    @Override
     public void onConnected(Bundle connectionHint) {        //protected void?
+        Log.i(TAG,"OnConnected");
         try { createLocationRequest(); }
         catch (java.lang.IllegalStateException ise) {
             System.out.println("IllegalStateException thrown [onConnected]");
@@ -82,8 +92,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
+        Log.i(TAG,"OnConnected");
     }
-    */
+
+    //@Override
+    public void onLocationChanged(Location current)
+    {
+        Log.i(TAG,"OnLocationChanged");
+        System.out.println("onLocationChanged] Lat/long now (" +
+                String.valueOf(current.getLatitude())+","+
+                String.valueOf(current.getLongitude())+")");
+        //do something with current location.
+    }
+
+    public void onConnectionSuspended(int flag) {
+        System.out.print(">>>>onConnectionSuspended");
+    }
+    public void onConnectionFailed(ConnectionResult result)
+    {
+        // An unresolvable error has occurred and a connection to Google APIs
+        // could not be established. Display an error message, or handle
+        // the failure silently
+        System.out.println(">>>> onConnectionFailed");
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -96,6 +129,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.i(TAG,"OnMapReady");
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
@@ -121,5 +155,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add "My location" button to user interface
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
-
 }
