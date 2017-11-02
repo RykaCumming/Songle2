@@ -44,6 +44,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
+import android.widget.EditText;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -64,6 +65,9 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
     public static final String WIFI = "Wi-Fi";
     public static final String ANY = "Any";
     private static final String URL = "http://stackoverflow.com/feeds/tag?tagnames=android&sort=newest";
+    private static final String URLSong1Map1 = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/01/map5.kml";
+
+   // public static final String  = "String1";
 
     public static final String TAG = "NetworkActivity";
 
@@ -76,16 +80,17 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
     public static String sPref = null;
 
     private NetworkFragment mNetworkFragment;
+    SongleXmlParser songleXmlParser = new SongleXmlParser();
     private boolean mDownloading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_network);
-        Log.e("NetworkActivity","OnCreate");
         mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/songs.xml");//getSupportFragmentManager()
+        mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/01/map5.kml");//getSupportFragmentManager()
+
         startDownload();
-        Log.e("NetworkActivity","OnCreate");
 
     }
 
@@ -98,9 +103,17 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
     }
 
     @Override
-    public void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException  {
-        Intent intent = new Intent(this, ScrollingActivity.class);
+    public void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
+      //  Log.e("NetworkActivity",result);
+
+        Intent intent = new Intent(NetworkActivity.this, ScrollingActivity.class);
+        intent.putExtra("Resultxml", result);
         startActivity(intent);
+   //     InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8.name()));
+   //     ArrayList<SongleXmlParser.Entry> parsed = songleXmlParser.parse(stream);
+  //      Log.e("NetworkActivity",parsed.get(0).getArtist());
+
+
     /*
         SongleXmlParser songleXmlParser =new SongleXmlParser();
         InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8.name()));

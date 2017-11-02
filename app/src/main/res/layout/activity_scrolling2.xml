@@ -7,6 +7,7 @@
     tools:context="uk.ac.ed.inf.songle2.ScrollingActivity">
 
     <ListView
+        android:id="@+id/list_view"
         android:layout_width="346dp"
         android:layout_height="539dp"
         android:layout_marginLeft="16dp"

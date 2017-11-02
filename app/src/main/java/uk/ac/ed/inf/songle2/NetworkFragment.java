@@ -163,6 +163,8 @@ public class NetworkFragment extends Fragment {
                         e.printStackTrace();
                     } catch (XmlPullParserException e) {
                         e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                     cancel(true);
                 }
@@ -207,6 +209,8 @@ public class NetworkFragment extends Fragment {
                         e.printStackTrace();
                     } catch (XmlPullParserException e) {
                         e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 } else if (result.mResultValue != null) {
                     try {
@@ -214,6 +218,8 @@ public class NetworkFragment extends Fragment {
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     } catch (XmlPullParserException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }

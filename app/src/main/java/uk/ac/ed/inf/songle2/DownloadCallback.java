@@ -4,6 +4,7 @@ import android.net.NetworkInfo;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -23,7 +24,7 @@ public interface DownloadCallback<T> {
      * Indicates that the callback handler needs to update its appearance or information based on
      * the result of the task. Expected to be called from the main thread.
      */
-    void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException;
+    void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException,IOException;
 
     /**
      * Get the device's active network status in the form of a NetworkInfo object.
