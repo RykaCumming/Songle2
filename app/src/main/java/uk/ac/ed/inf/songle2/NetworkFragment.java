@@ -241,9 +241,9 @@ public class NetworkFragment extends Fragment {
             try {
                 connection = (HttpURLConnection) url.openConnection();
                 // Timeout for reading InputStream arbitrarily set to 3000ms.
-                connection.setReadTimeout(3000);
+                connection.setReadTimeout(1000000);
                 // Timeout for connection.connect() arbitrarily set to 3000ms.
-                connection.setConnectTimeout(3000);
+                connection.setConnectTimeout(1000000);
                 // For this use case, set HTTP method to GET.
                 connection.setRequestMethod("GET");
                 // Already true by default but setting just in case; needs to be true since this request
@@ -261,7 +261,7 @@ public class NetworkFragment extends Fragment {
                 publishProgress(DownloadCallback.Progress.GET_INPUT_STREAM_SUCCESS, 0);
                 if (stream != null) {
                     // Converts Stream to String with max length of 500.
-                    result = readStream(stream, 100000);
+                    result = readStream(stream, 1000000);
                 }
             } finally {
                 // Close Stream and disconnect HTTPS connection.

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -27,9 +29,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,DownloadCallback {
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -37,6 +43,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mLocationPermissionGranted = false;
     private Location mLastLocation;
     private static final String TAG ="MapsActivity";
+
+    private NetworkFragment m1NetworkFragment;
+    // Whether there is a Wi-Fi connection.
+    private static boolean wifiConnected = false;
+    // Whether there is a mobile connection.
+    private static boolean mobileConnected = false;
+    // Whether the display should be refreshed.
+    public static boolean refreshDisplay = true;
+    public static String sPref = null;
+    private boolean mDownloading = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +63,68 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Log.i(TAG, "OnCreate");
+        m1NetworkFragment = NetworkFragment.getInstance(getFragmentManager(), "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/01/map5.kml");
+        startDownload();
+    }
+
+    private void startDownload() {
+        if (!mDownloading && m1NetworkFragment != null) {
+            // Execute the async download.
+            m1NetworkFragment.startDownload(this);
+            mDownloading = true;
+        }
+    }
+
+    @Override
+    public void updateFromDownload(String result) throws UnsupportedEncodingException, XmlPullParserException, IOException {
+        largeLog("result",result);
+    }
+
+    public static void largeLog(String tag, String content) {
+        if (content.length() > 4000) {
+            Log.d(tag, content.substring(0, 4000));
+            largeLog(tag, content.substring(4000));
+        } else {
+            Log.d(tag, content);
+        }
+    }
+
+    @Override
+    public NetworkInfo getActiveNetworkInfo() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo;
+    }
+
+    @Override
+    public void onProgressUpdate(int progressCode, int percentComplete) {
+        switch(progressCode) {
+            // You can add UI behavior for progress updates here.
+            case Progress.ERROR:
+                //...
+                break;
+            case Progress.CONNECT_SUCCESS:
+                //...
+                break;
+            case Progress.GET_INPUT_STREAM_SUCCESS:
+                //...
+                break;
+            case Progress.PROCESS_INPUT_STREAM_IN_PROGRESS:
+                //...
+                break;
+            case Progress.PROCESS_INPUT_STREAM_SUCCESS:
+                //...
+                break;
+        }
+    }
+
+    @Override
+    public void finishDownloading() {
+        mDownloading = false;
+        if (m1NetworkFragment != null) {
+            m1NetworkFragment.cancelDownload();
+        }
     }
     /**
     @Override
@@ -64,6 +142,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 */
+
+
+
+
+
+
+
 
     protected void createLocationRequest() {
         Log.i(TAG,"OnLocationRequest");
@@ -155,4 +240,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add "My location" button to user interface
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
+
 }

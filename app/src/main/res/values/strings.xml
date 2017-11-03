@@ -167,4 +167,10 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_download_kmltask">DownloadKMLTask</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_difficulty">DifficultyActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="lorem_ipsum">lorem_ipsum</string>
 </resources>

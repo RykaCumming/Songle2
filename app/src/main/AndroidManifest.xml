@@ -55,6 +55,14 @@
         <activity
             android:name=".DownloadKMLTask"
             android:label="@string/title_activity_download_kmltask"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Main2Activity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DifficultyActivity"
+            android:label="@string/title_activity_difficulty"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

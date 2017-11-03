@@ -95,17 +95,31 @@ public class ScrollingActivity extends AppCompatActivity {
 
 
         mParseTask.execute(result);
+    }
 
-
-
-
+    public static String spaces(String s){
+        String result ="";
+        for (char c : s.toCharArray())
+        {
+            if (c == ' ')
+            {
+                result=result+" ";
+            }
+            else
+            {
+                result=result+"*";
+            }
+        }
+        return result;
     }
     public void updateFromDownload(ArrayList<SongleXmlParser.Entry> parsedresult) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
         Log.e("parsed",parsedresult.get(0).getNumber());
         listView = findViewById(R.id.list_view); //recyclerview
         for (int i=0;i<parsedresult.size();i++)
         {
-            list.add("SONG"+ " " + parsedresult.get(i).getNumber());
+            list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"\n" +
+                    "ARTIST: "+spaces(parsedresult.get(i).getArtist())+"\n"+
+                    "TITLE: " +spaces(parsedresult.get(i).getTitle()));
         }
 
         adapter = new ArrayAdapter(ScrollingActivity.this,android.R.layout.simple_list_item_1,list);
@@ -114,6 +128,9 @@ public class ScrollingActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                Intent intent = new Intent(ScrollingActivity.this,MapsActivity.class);
+                intent.putExtra("ScrollingActivity",listView.getItemAtPosition(position).toString());
+                startActivity(intent);
                 //view.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
             }
         });
@@ -148,7 +165,7 @@ public class ScrollingActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(ArrayList<SongleXmlParser.Entry> entries) {
-       //     super.onPostExecute(entries);
+        //     super.onPostExecute(entries);
             try {
                 updateFromDownload(entries);
             } catch (XmlPullParserException e) {
