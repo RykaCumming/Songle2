@@ -63,6 +63,10 @@
         <activity
             android:name=".DifficultyActivity"
             android:label="@string/title_activity_difficulty"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".FivePageActivity"
+            android:label="@string/title_activity_five_page"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

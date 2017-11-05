@@ -8,6 +8,7 @@
 
     <ListView
         android:id="@+id/list_view"
+        style="@style/Base.V11.Theme.AppCompat.Dialog"
         android:layout_width="346dp"
         android:layout_height="539dp"
         android:layout_marginLeft="16dp"
