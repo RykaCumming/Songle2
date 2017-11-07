@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="uk.ac.ed.inf.songle2.HowToPlayActivity"
+    android:theme="@style/Base.V21.Theme.AppCompat.Dialog"
+    android:background="@drawable/background"
+    tools:showIn="@layout/activity_how_to_play">
+
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="sendMessage"
+        android:text="Back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="250dp"
+        android:layout_height="400dp"
+        android:textColor="@android:color/white"
+        android:fontFamily="sans-serif-condensed"
+        android:text="The objective of the game is to collect enough lyrics from a chosen song to guess it's name. The words from the song are collected by physically travelling to a location to pick them up. When you are close enough to a word, tap on it to add it to your dictionary.
+
+When you are ready to guess, open up your dictionary and press the guess button. Good luck!"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.855" />
+</android.support.constraint.ConstraintLayout>

@@ -1,6 +1,9 @@
 package uk.ac.ed.inf.songle2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,8 +31,37 @@ public class MainActivity extends AppCompatActivity {
        //     }
       //  });
     }
+/*    ConnectivityManager cm =
+            (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+    boolean isConnected = activeNetwork != null &&
+            activeNetwork.isConnectedOrConnecting(); */
+
     public void sendMessage(View view) {
-        Intent intent = new Intent(this, NetworkActivity.class);
+
+  //      if (!isConnected){
+            Snackbar mySnackbar = Snackbar.make(view,"There is no internet connection", 2500);
+            mySnackbar.show();
+   //     }
+    //    else {
+
+        //    Intent intent = new Intent(this, NetworkActivity.class);
+            //        EditText editText = (EditText) findViewById(R.id.editText);
+            //        String message = editText.getText().toString();
+            //        intent.putExtra(EXTRA_MESSAGE, message);
+          //  startActivity(intent);
+     //   }
+    }
+    public void HowToPlayMessage(View view) {
+        Intent intent = new Intent(this, HowToPlayActivity.class);
+//        EditText editText = (EditText) findViewById(R.id.editText);
+//        String message = editText.getText().toString();
+//        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
+    public void SettingsMessage(View view) {
+        Intent intent = new Intent(this, SettingsActivity2.class);
 //        EditText editText = (EditText) findViewById(R.id.editText);
 //        String message = editText.getText().toString();
 //        intent.putExtra(EXTRA_MESSAGE, message);
