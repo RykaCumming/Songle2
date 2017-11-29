@@ -47,7 +47,7 @@ import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-
+    public static ArrayList<SongleKmlParser.Entry> thelist;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
@@ -122,7 +122,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void updateFromDownload(ArrayList<SongleKmlParser.Entry> entries) throws UnsupportedEncodingException, XmlPullParserException, IOException {
+        Log.i("firstentry",entries.get(0).getName());
         Log.i("firstentry",entries.get(0).getDescription());
+        Log.i("firstentry",entries.get(0).getStyleUrl());
+        Log.i("firstentry",entries.get(0).getCoordinate());
+        thelist=entries;
+//        String[][3] s = new String[][];
+
 
     }
 
@@ -172,7 +178,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected void onPostExecute(ArrayList<SongleKmlParser.Entry> entries) {
             //     super.onPostExecute(entries);
             try {
-                Log.i("onpostexecute",entries.get(0).getDescription());
                 updateFromDownload(entries);
             } catch (XmlPullParserException e) {
                 e.printStackTrace();

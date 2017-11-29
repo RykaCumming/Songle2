@@ -32,17 +32,21 @@ public class SongleKmlParser {
     }
     private ArrayList readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         ArrayList<Entry> entries = new ArrayList();
-
         parser.require(XmlPullParser.START_TAG, ns, "kml");
-        while (parser.next() != XmlPullParser.END_TAG) { //while parse has not reached </Document>
+        while (parser.next() != XmlPullParser.END_TAG) { //while parse has not reached </kml> WRONG
             if (parser.getEventType() != XmlPullParser.START_TAG) { //??
                 continue;
             }
             String name = parser.getName();
             // Starts by looking for the entry tag
+
             if (name.equals("Placemark")) {
                 entries.add(readEntry(parser));
-            } else {
+            }
+            else if (name.equals("Document")) {
+                continue;
+            }
+            else {
                 skip(parser);
             }
         }
@@ -62,13 +66,13 @@ public class SongleKmlParser {
         public final String name;
         public final String description;
         public final String styleUrl;
-        public final Point point;
+        public final String coordinate;
 
-        private Entry(String name,String description,String styleUrl, Point point) {
+        private Entry(String name,String description,String styleUrl, String coordinate) {
             this.name = name;
             this.description = description;
             this.styleUrl = styleUrl;
-            this.point = point;
+            this.coordinate = coordinate;
         }
 
         public String getName() {
@@ -80,8 +84,8 @@ public class SongleKmlParser {
         public String getStyleUrl() {
             return styleUrl;
         }
-        public Point getPoint() {
-            return point;
+        public String getCoordinate() {
+            return coordinate;
         }
     }
 
@@ -92,7 +96,7 @@ public class SongleKmlParser {
         String name = null;
         String description = null;
         String styleUrl = null;
-        Point point = null;
+        String coordinate = null;
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -105,12 +109,16 @@ public class SongleKmlParser {
             } else if (thename.equals("styleUrl")) {
                 styleUrl = readstyleUrl(parser);
             } else if (thename.equals("Point")) {
-                point = readPoint(parser);
-            } else {
+                continue;
+            }
+            else if (thename.equals("coordinates")) {
+                coordinate = readCoordinate(parser);
+            }
+            else {
                 skip(parser);
             }
         }
-        return new Entry(name,description,styleUrl,point);
+        return new Entry(name,description,styleUrl,coordinate);
     }
     // Processes title tags in the feed.
     private String readName(XmlPullParser parser) throws IOException, XmlPullParserException {
