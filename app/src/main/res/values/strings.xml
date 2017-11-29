@@ -181,4 +181,10 @@
     <string name="tab_text_3">Tab 3</string>
     <string name="title_activity_how_to_play">HowToPlayActivity</string>
     <string name="title_activity_settings2">Settings</string>
+    <string name="title_activity_guess">GuessActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>

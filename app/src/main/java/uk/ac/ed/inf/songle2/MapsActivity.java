@@ -8,13 +8,17 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -33,12 +37,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,DownloadCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -49,7 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<String> wordlist = new ArrayList<>();
 
     private NetworkFragment m1NetworkFragment;
-    private DictionaryFragment mDictionaryFragment;
+  //  private DictionaryFragment mDictionaryFragment;
     // Whether there is a Wi-Fi connection.
     private static boolean wifiConnected = false;
     // Whether there is a mobile connection.
@@ -59,6 +67,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static String sPref = null;
     private boolean mDownloading = false;
 
+    SongleKmlParser songleKmlParser = new SongleKmlParser();
+    ParseTask mParseTask= new ParseTask();
 
 
     @Override
@@ -69,25 +79,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        m1NetworkFragment = NetworkFragment.getInstance(getFragmentManager(), "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/01/map5.kml");
-        startDownload();
-        mDictionaryFragment = new DictionaryFragment();
+        Intent intent = getIntent();
+        String kmlfile = intent.getStringExtra("Resultkml");
+        Log.e("thekmlfile",kmlfile);
+     //   WordListFragment wordListFragment = WordListFragment.newInstance();
+//        wordListFragment.show(getFragmentManager(), "hello");
+    //    Button dictionary = findViewById(R.id.dictionary);
+    //    dictionary.setOnClickListener(new Button.OnClickListener() {
+    //        @Override
+     //       public void onClick(View v) {
+      //          Snackbar mySnackbar = Snackbar.make(v,"Word Collected: little", 6000);
+       //         mySnackbar.show();
+               // WordListFragment wordListFragment = WordListFragment.newInstance();
+              //  wordListFragment.show(getFragmentManager(), "hello");
+      //      }
+   //     });
+
+
+       /* FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        WordListFragment wordListFragment = new WordListFragment();
+        transaction.add(R.id.fragment_container,wordListFragment);
+        transaction.commit();
+        Button dictionary = (Button) findViewById(R.id.dictionary);
+*/
       //  transaction.replace(R.id.dictionaryfragment2,mDictionaryFragment);
 
+        Button button4 = (Button)findViewById(R.id.dictionary2);
+        button4.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+
+
+        Snackbar mySnackbar = Snackbar.make(v,"Word Collected: little", 6000);
+        mySnackbar.show();
+
+
+                    }
+                }
+        );
+        mParseTask.execute(kmlfile);
     }
 
-    private void startDownload() {
-        if (!mDownloading && m1NetworkFragment != null) {
-            // Execute the async download.
-            m1NetworkFragment.startDownload(this);
-            mDownloading = true;
-        }
-    }
+    public void updateFromDownload(ArrayList<SongleKmlParser.Entry> entries) throws UnsupportedEncodingException, XmlPullParserException, IOException {
+        Log.i("firstentry",entries.get(0).getDescription());
 
-    @Override
-    public void updateFromDownload(String result) throws UnsupportedEncodingException, XmlPullParserException, IOException {
-        largeLog("result",result);
     }
 
     public static void largeLog(String tag, String content) {
@@ -99,43 +135,58 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
-    public NetworkInfo getActiveNetworkInfo() {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo;
+
+
+
+
+    public class ParseTask extends AsyncTask<String, Void, ArrayList<SongleKmlParser.Entry>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<SongleKmlParser.Entry> doInBackground(String... res) { //        mParseTask.execute(result);
+
+            String res1 = res[0];
+            Log.i("res1",res1);
+            InputStream stream = null;
+
+            try {
+                stream = new ByteArrayInputStream(res1.getBytes(StandardCharsets.UTF_8.name()));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            ArrayList<SongleKmlParser.Entry> entries = new ArrayList<>();
+            try {
+                entries = songleKmlParser.parse(stream);
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return entries;
+        }
+        @Override
+        protected void onPostExecute(ArrayList<SongleKmlParser.Entry> entries) {
+            //     super.onPostExecute(entries);
+            try {
+                Log.i("onpostexecute",entries.get(0).getDescription());
+                updateFromDownload(entries);
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
     }
 
-    @Override
-    public void onProgressUpdate(int progressCode, int percentComplete) {
-        switch(progressCode) {
-            // You can add UI behavior for progress updates here.
-            case Progress.ERROR:
-                //...
-                break;
-            case Progress.CONNECT_SUCCESS:
-                //...
-                break;
-            case Progress.GET_INPUT_STREAM_SUCCESS:
-                //...
-                break;
-            case Progress.PROCESS_INPUT_STREAM_IN_PROGRESS:
-                //...
-                break;
-            case Progress.PROCESS_INPUT_STREAM_SUCCESS:
-                //...
-                break;
-        }
-    }
 
-    @Override
-    public void finishDownloading() {
-        mDownloading = false;
-        if (m1NetworkFragment != null) {
-            m1NetworkFragment.cancelDownload();
-        }
-    }
+
     /**
     @Override
     protected void onStart() {
@@ -153,6 +204,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 */
 
+    public void sendMessage(View view) {
+    //    Intent intent = new Intent(this, NetworkActivity.class);
+    //    startActivity(intent);
+        Snackbar mySnackbar = Snackbar.make(view,"Word Collected: little", 2500);
+        mySnackbar.show();
+    }
     protected void createLocationRequest() {
         Log.i(TAG,"OnLocationRequest");
         LocationRequest mLocationRequest = new LocationRequest();
@@ -225,6 +282,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(55.944425, -3.188396);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15.2f));
+ /*       mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94411695607683, -3.1867307741115662))); //additional point I added
         mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94481695607683, -3.1869307741115662)));
         mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94482456601353, -3.1885226965749776)));
         mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94444913310533, -3.186669178092598)));
@@ -305,7 +363,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94290382022087, -3.1871490441895878)));
         mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.943631892989316, -3.1915574202944623)));
         mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94486283928077, -3.186439542156783)));
-
+*/
 
         try { //Visualise current position with small blue circle
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

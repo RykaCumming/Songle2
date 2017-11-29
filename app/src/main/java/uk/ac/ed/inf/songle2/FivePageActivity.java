@@ -1,5 +1,6 @@
 package uk.ac.ed.inf.songle2;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,12 +37,18 @@ public class FivePageActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    public static String songno="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_five_page);
-
+        Intent intent = getIntent();
+        String songnumber = intent.getStringExtra("ScrollingActivity");
+        String[] ph1 =songnumber.split("\\r?\\n"); //split on newline
+        String[] ph2 =ph1[0].split(" "); //ph[1]=02
+        songno=ph2[1];
+        Log.i("songno",songno);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("        CHOOSE YOUR DIFFICULTY");
        // setSupportActionBar(toolbar);
@@ -117,7 +125,6 @@ public class FivePageActivity extends AppCompatActivity {
                     return new HardFragment();
                 case 4:
                     return new VeryHardFragment();
-
             }
             return null;
         }

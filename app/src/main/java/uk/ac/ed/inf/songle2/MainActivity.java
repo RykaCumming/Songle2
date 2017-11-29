@@ -41,30 +41,22 @@ public class MainActivity extends AppCompatActivity {
     public void sendMessage(View view) {
 
   //      if (!isConnected){
-            Snackbar mySnackbar = Snackbar.make(view,"There is no internet connection", 2500);
-            mySnackbar.show();
+        //    Snackbar mySnackbar = Snackbar.make(view,"There is no internet connection", 2500);
+           // mySnackbar.show();
    //     }
     //    else {
 
-        //    Intent intent = new Intent(this, NetworkActivity.class);
-            //        EditText editText = (EditText) findViewById(R.id.editText);
-            //        String message = editText.getText().toString();
-            //        intent.putExtra(EXTRA_MESSAGE, message);
-          //  startActivity(intent);
+            Intent intent = new Intent(this, NetworkActivity.class);
+            intent.putExtra("file", "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/songs.xml");
+            startActivity(intent);
      //   }
     }
     public void HowToPlayMessage(View view) {
         Intent intent = new Intent(this, HowToPlayActivity.class);
-//        EditText editText = (EditText) findViewById(R.id.editText);
-//        String message = editText.getText().toString();
-//        intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
     public void SettingsMessage(View view) {
         Intent intent = new Intent(this, SettingsActivity2.class);
-//        EditText editText = (EditText) findViewById(R.id.editText);
-//        String message = editText.getText().toString();
-//        intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 

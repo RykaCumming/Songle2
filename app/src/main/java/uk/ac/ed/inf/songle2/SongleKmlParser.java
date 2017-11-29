@@ -33,14 +33,14 @@ public class SongleKmlParser {
     private ArrayList readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         ArrayList<Entry> entries = new ArrayList();
 
-        parser.require(XmlPullParser.START_TAG, ns, "Songs");
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
+        parser.require(XmlPullParser.START_TAG, ns, "kml");
+        while (parser.next() != XmlPullParser.END_TAG) { //while parse has not reached </Document>
+            if (parser.getEventType() != XmlPullParser.START_TAG) { //??
                 continue;
             }
             String name = parser.getName();
             // Starts by looking for the entry tag
-            if (name.equals("Song")) {
+            if (name.equals("Placemark")) {
                 entries.add(readEntry(parser));
             } else {
                 skip(parser);
@@ -49,94 +49,117 @@ public class SongleKmlParser {
         return entries;
     }
 
+    public static class Point {
+        public final String coordinate;
+
+        private Point(String coordinate) {this.coordinate=coordinate;}
+        public String getCoordinate()
+        {
+            return coordinate;
+        }
+    }
     public static class Entry {
-        public final String number;
-        public final String artist;
-        public final String title;
-        public final String link;
+        public final String name;
+        public final String description;
+        public final String styleUrl;
+        public final Point point;
 
-        private Entry(String number,String artist,String title, String link) {
-            this.artist = artist;
-            this.title = title;
-            this.number = number;
-            this.link = link;
-        }
-
-        public String getArtist() {
-            return artist;
-        }
-        public String getTitle() {
-            return title;
-        }
-        public String getLink() {
-            return link;
+        private Entry(String name,String description,String styleUrl, Point point) {
+            this.name = name;
+            this.description = description;
+            this.styleUrl = styleUrl;
+            this.point = point;
         }
 
-        public String getNumber() {
-            return number;
+        public String getName() {
+            return name;
         }
-
+        public String getDescription() {
+            return description;
+        }
+        public String getStyleUrl() {
+            return styleUrl;
+        }
+        public Point getPoint() {
+            return point;
+        }
     }
 
     // Parses the contents of an entry. If it encounters a title, summary, or link tag, hands them off
 // to their respective "read" methods for processing. Otherwise, skips the tag.
     private Entry readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, ns, "Song");
-        String number = null;
-        String artist = null;
-        String title = null;
-        String link = null;
+        parser.require(XmlPullParser.START_TAG, ns, "Placemark");
+        String name = null;
+        String description = null;
+        String styleUrl = null;
+        Point point = null;
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
-            String name = parser.getName();
-            if (name.equals("Title")) {
-                title = readTitle(parser);
-            } else if (name.equals("Number")) {
-                number = readNumber(parser);
-            } else if (name.equals("Link")) {
-                link = readLink(parser);
-            } else if (name.equals("Artist")) {
-                artist = readArtist(parser);
+            String thename = parser.getName();
+            if (thename.equals("name")) {
+                name = readName(parser);
+            } else if (thename.equals("description")) {
+                description = readDescription(parser);
+            } else if (thename.equals("styleUrl")) {
+                styleUrl = readstyleUrl(parser);
+            } else if (thename.equals("Point")) {
+                point = readPoint(parser);
             } else {
                 skip(parser);
             }
         }
-        return new Entry(number,artist,title,link);
+        return new Entry(name,description,styleUrl,point);
+    }
+    // Processes title tags in the feed.
+    private String readName(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "name");
+        String name = readText(parser);
+        parser.require(XmlPullParser.END_TAG, ns, "name");
+        return name;
+    }
+    private String readDescription(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "description");
+        String description = readText(parser);
+        parser.require(XmlPullParser.END_TAG, ns, "description");
+        return description;
+    }
+    private String readstyleUrl(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "styleUrl");
+        String styleUrl = readText(parser);
+        parser.require(XmlPullParser.END_TAG, ns, "styleUrl");
+        return styleUrl;
+    }
+    private Point readPoint(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "Point");
+        String coordinates = null;
+        String thename = parser.getName();
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            if (thename.equals("coordinates")) {
+                coordinates = readCoordinate(parser);
+            } else {
+                skip(parser);
+            }
+        }
+//        parser.require(XmlPullParser.END_TAG, ns, "point");
+        return new Point(coordinates);
     }
 
-    // Processes title tags in the feed.
-    private String readTitle(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "Title");
-        String title = readText(parser);
-        parser.require(XmlPullParser.END_TAG, ns, "Title");
-        return title;
+    private String readCoordinate(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "coordinates");
+        String coordinate = readText(parser);
+        parser.require(XmlPullParser.END_TAG, ns, "coordinates");
+        return coordinate;
     }
+
+
 
     // Processes link tags in the feed.
-    private String readLink(XmlPullParser parser) throws IOException, XmlPullParserException {
-        String link = "";
-        parser.require(XmlPullParser.START_TAG, ns, "Link");
-        link = readText(parser);
-        parser.require(XmlPullParser.END_TAG, ns, "Link");
-        return link;
-    }
 
-    // Processes summary tags in the feed.
-    private String readArtist(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "Artist");
-        String artist = readText(parser);
-        parser.require(XmlPullParser.END_TAG, ns, "Artist");
-        return artist;
-    }
-    // Processes summary tags in the feed.
-    private String readNumber(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.require(XmlPullParser.START_TAG, ns, "Number");
-        String number = readText(parser);
-        parser.require(XmlPullParser.END_TAG, ns, "Number");
-        return number;
-    }
 
 
     // For the tags title and summary, extracts their text values.

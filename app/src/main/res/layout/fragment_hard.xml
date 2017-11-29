@@ -19,15 +19,15 @@
         app:layout_constraintTop_toTopOf="@+id/constraintLayout"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
+
     <Button
         android:id="@+id/btnOpen"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_marginLeft="148dp"
-        android:background="@android:color/holo_orange_dark"
-        android:backgroundTint="@android:color/holo_orange_dark"
+        android:layout_marginLeft="56dp"
+        android:background="@drawable/buttonshapehard"
         android:text="GO!"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />

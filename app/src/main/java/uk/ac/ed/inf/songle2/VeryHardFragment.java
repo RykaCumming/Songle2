@@ -25,12 +25,13 @@ public class VeryHardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_very_hard, container, false);
-
+        final String url = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+FivePageActivity.songno+"map1.kml";
         Button btnOpen = (Button) view.findViewById(R.id.btnOpen);
 
         btnOpen.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                Intent intent = new Intent(getActivity(), NetworkActivity.class);
+                intent.putExtra("file", url);
                 startActivity(intent);
             }
         });

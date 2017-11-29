@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +29,19 @@ public class EasyFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_easy, container, false);
 
+        final String url = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+FivePageActivity.songno+"/map5.kml";
         Button btnOpen = (Button) view.findViewById(R.id.btnOpen);
 
         btnOpen.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                Intent intent = new Intent(getActivity(), NetworkActivity.class);
+                intent.putExtra("file", url);
+//                Log.i("easyurl",url);
                 startActivity(intent);
             }
         });
+
+
         return view;
 
     }

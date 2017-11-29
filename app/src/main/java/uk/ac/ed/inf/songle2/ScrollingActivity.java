@@ -5,6 +5,7 @@ import android.net.Network;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,16 +40,15 @@ public class ScrollingActivity extends AppCompatActivity {
     List list = new ArrayList();
     ArrayAdapter adapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling2);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("             CHOOSE YOUR SONG");
         Log.e("Scrolling","made it");
         Intent intent = getIntent();
         String result = intent.getStringExtra("Resultxml");
-
-
         mParseTask.execute(result);
     }
 
@@ -72,9 +72,18 @@ public class ScrollingActivity extends AppCompatActivity {
         listView = findViewById(R.id.list_view); //recyclerview
         for (int i=0;i<parsedresult.size();i++)
         {
-            list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"\n" +
-                    "ARTIST: "+spaces(parsedresult.get(i).getArtist())+"\n"+
-                    "TITLE: " +spaces(parsedresult.get(i).getTitle()));
+   /*         if (i==0||i==2||i==3) {
+                list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"   Completed on Easy"+"\n" +
+                        "ARTIST: "+parsedresult.get(i).getArtist()+"\n"+
+                        "TITLE: " +parsedresult.get(i).getTitle());
+            }
+            else
+            {*/
+                list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"\n" +
+                        "ARTIST: "+spaces(parsedresult.get(i).getArtist())+"\n"+
+                        "TITLE: " +spaces(parsedresult.get(i).getTitle()));
+           // }
+
         }
 
         adapter = new ArrayAdapter(ScrollingActivity.this,android.R.layout.simple_list_item_1,list);
@@ -85,8 +94,9 @@ public class ScrollingActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(ScrollingActivity.this,FivePageActivity.class);
                 intent.putExtra("ScrollingActivity",listView.getItemAtPosition(position).toString());
+   //             intent.putExtra("thesongnum",listView.getItemAtPosition(position).toString());
                 startActivity(intent);
-                //view.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
             }
         });
     }
@@ -98,7 +108,7 @@ public class ScrollingActivity extends AppCompatActivity {
         }
 
         @Override
-        protected ArrayList<SongleXmlParser.Entry> doInBackground(String... res) {
+        protected ArrayList<SongleXmlParser.Entry> doInBackground(String... res) { //        mParseTask.execute(result);
 
             String res1 = res[0];
             InputStream stream = null;

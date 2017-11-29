@@ -87,11 +87,13 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_network);
-        mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/songs.xml");//getSupportFragmentManager()
-      //  mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/01/map5.kml");//getSupportFragmentManager()
+        Intent intent = getIntent();
+        String file = intent.getStringExtra("file");
+        Log.i("urlmadeit",file);
+        mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), file);
+      //  mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/01/map5.kml");
 
         startDownload();
-
     }
 
     private void startDownload() {
@@ -105,10 +107,19 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
     @Override
     public void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
       //  Log.e("NetworkActivity",result);
-
-        Intent intent = new Intent(NetworkActivity.this, ScrollingActivity.class);
-        intent.putExtra("Resultxml", result);
-        startActivity(intent);
+        if (!result.contains("kml xmlns"))
+        {
+            Intent intent = new Intent(NetworkActivity.this, ScrollingActivity.class);
+            intent.putExtra("Resultxml", result);
+            startActivity(intent);
+        }
+        else
+        {
+              Log.i("NetworkActivitykml",result);
+              Intent intent = new Intent(NetworkActivity.this, MapsActivity.class);
+              intent.putExtra("Resultkml", result);
+              startActivity(intent);
+        }
    //     InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8.name()));
    //     ArrayList<SongleXmlParser.Entry> parsed = songleXmlParser.parse(stream);
   //      Log.e("NetworkActivity",parsed.get(0).getArtist());
