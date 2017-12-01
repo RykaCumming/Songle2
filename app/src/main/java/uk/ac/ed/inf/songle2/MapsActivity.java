@@ -33,6 +33,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -43,11 +44,13 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
-    public static ArrayList<SongleKmlParser.Entry> thelist;
+    public List<Marker> mMarkers = new ArrayList<Marker>();
+    public ArrayList<SongleKmlParser.Entry> thelist; //static?
+    public  String[][] splits;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
@@ -122,12 +125,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void updateFromDownload(ArrayList<SongleKmlParser.Entry> entries) throws UnsupportedEncodingException, XmlPullParserException, IOException {
-        Log.i("firstentry",entries.get(0).getName());
-        Log.i("firstentry",entries.get(0).getDescription());
-        Log.i("firstentry",entries.get(0).getStyleUrl());
         Log.i("firstentry",entries.get(0).getCoordinate());
         thelist=entries;
-//        String[][3] s = new String[][];
+        Log.i("entries.size()",entries.size()+"");
+
+//        String[][] split =new String[3][entries.size()];
+        for (int i=0;i<entries.size();i++) {
+            String[] coordinates = entries.get(i).getCoordinate().split(",");
+            String lat = coordinates[1];
+            String lng = coordinates[0];
+            String zero =coordinates[2];
+            Log.i("yeehaw",lat);
+            Log.i("yeehaw",lng);
+            Log.i("yeehaw",zero);
+
+
+
+//            mMap.addMarker(new LatLng())
+
+//            split[i]=entries.get(i).getCoordinate().split(",");
+        }
+/*        splits=split;
+        Log.i("Shouldbezero",split[2][0]);
+        Log.i("Shouldbezero",split[2][1]);
+        Log.i("Shouldbezero",split[2][2]);
+        Log.i("Shouldbezero",split[2][3]);
+        Log.i("-3something",split[0][0]);
+        Log.i("-3something",split[0][1]);
+        Log.i("-3something",split[0][2]);
+        Log.i("-3something",split[0][3]);
+        Log.i("55something",split[1][0]);
+        Log.i("55something",split[1][1]);
+        Log.i("55something",split[1][2]);
+        Log.i("55something",split[1][3]);
+*/
+
 
 
     }
@@ -283,10 +315,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i(TAG,"OnMapReady");
         mMap = googleMap;
 
+
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(55.944425, -3.188396);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15.2f));
+
+//        LatLng[] points =new LatLng[splits.length];
+  //      for
+
+
  /*       mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94411695607683, -3.1867307741115662))); //additional point I added
         mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94481695607683, -3.1869307741115662)));
         mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank)).position(new LatLng(55.94482456601353, -3.1885226965749776)));
