@@ -36,7 +36,6 @@ public class EasyFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NetworkActivity.class);
                 intent.putExtra("file", url);
-//                Log.i("easyurl",url);
                 startActivity(intent);
             }
         });

@@ -135,11 +135,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String lat = coordinates[1];
             String lng = coordinates[0];
             String zero =coordinates[2];
-            Log.i("yeehaw",lat);
-            Log.i("yeehaw",lng);
-            Log.i("yeehaw",zero);
+            Log.i("latlng",lat);
+            Log.i("latlng",lng);
+            Log.i("zero",zero);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(new LatLng(Double.parseDouble(lat),Double.parseDouble(lng)));
+            Marker marker = mMap.addMarker(markerOptions);
+            if (entries.get(i).getStyleUrl().equals("#unclassified"))
+            {
+                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank));
+            }
+            else if (entries.get(i).getStyleUrl().equals("#boring"))
+            {
+                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ylw_blank));
+            }
+            else if (entries.get(i).getStyleUrl().equals("#notboring"))
+            {
+                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.ylw_circle));
+            }
+            else if (entries.get(i).getStyleUrl().equals("#interesting"))
+            {
+                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.orange_diamond));
+            }
+            else if (entries.get(i).getStyleUrl().equals("#veryinteresting"))
+            {
+                marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.red_stars));
+            }
+            else {}
 
-
+            mMarkers.add(marker);
 
 //            mMap.addMarker(new LatLng())
 
