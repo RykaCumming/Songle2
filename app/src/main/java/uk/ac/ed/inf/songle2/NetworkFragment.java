@@ -202,7 +202,6 @@ public class NetworkFragment extends Fragment {
         protected void onPostExecute(DownloadTask.Result result) {
             if (result != null && mCallback != null) {
                 if (result.mException != null) {
-                    Log.e("aisojd","oaoisjd");
                     try {
                         mCallback.updateFromDownload(result.mException.getMessage());
                     } catch (UnsupportedEncodingException e) {

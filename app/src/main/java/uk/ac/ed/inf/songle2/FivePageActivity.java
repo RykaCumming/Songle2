@@ -116,7 +116,7 @@ public class FivePageActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new EasyFragment();
+                    return EasyFragment.newInstance("01");
                 case 1:
                     return new NotAsEasyFragment();
                 case 2:

@@ -78,10 +78,11 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
     // Whether the display should be refreshed.
     public static boolean refreshDisplay = true;
     public static String sPref = null;
-
+    public Intent main_Intent;
     private NetworkFragment mNetworkFragment;
     SongleXmlParser songleXmlParser = new SongleXmlParser();
     private boolean mDownloading = false;
+    public boolean kml_finished =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +90,14 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
         setContentView(R.layout.activity_network);
         Intent intent = getIntent();
         String file = intent.getStringExtra("file");
+        String words = intent.getStringExtra("lyrics");
+        main_Intent=intent;
         Log.i("urlmadeit",file);
         mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), file);
-      //  mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/01/map5.kml");
-
         startDownload();
+/*      kml_finished=true;
+        mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), words);
+        startDownload();*/
     }
 
     private void startDownload() {
@@ -103,40 +107,34 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
             mDownloading = true;
         }
     }
-
     @Override
     public void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
-      //  Log.e("NetworkActivity",result);
-        if (!result.contains("kml xmlns"))
+        if (result.contains("<?xml version=") && !(result.contains("kml xmlns")))
         {
             Intent intent = new Intent(NetworkActivity.this, ScrollingActivity.class);
-            intent.putExtra("Resultxml", result);
+            intent.putExtra("Resultxml",result);
             startActivity(intent);
         }
-        else
+        else if (result.contains("kml xmlns"))
         {
-              Log.i("NetworkActivitykml",result);
-              Intent intent = new Intent(NetworkActivity.this, MapsActivity.class);
+              Intent intent = new Intent(NetworkActivity.this, DownloadLyricsActivity.class);
               intent.putExtra("Resultkml", result);
               startActivity(intent);
         }
-   //     InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8.name()));
-   //     ArrayList<SongleXmlParser.Entry> parsed = songleXmlParser.parse(stream);
-  //      Log.e("NetworkActivity",parsed.get(0).getArtist());
+        else
+        {
+            String kmlfile = main_Intent.getStringExtra("kmlfromDownloadLyricActivity");
+            Intent tomap = new Intent(NetworkActivity.this, MapsActivity.class);
+            tomap.putExtra("ResultLyrics",result);
+            tomap.putExtra("",kmlfile);
+            startActivity(tomap);
+ //           Intent intent = new Intent(NetworkActivity.this, MapsActivity.class);
+ //           intent.putExtra("Keepkmlstring",);
+ //           intent.putExtra("Lyrics",result);
+//            main_Intent.putExtra("ResultLyrics",result);
 
-
-    /*
-        SongleXmlParser songleXmlParser =new SongleXmlParser();
-        InputStream stream = new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8.name()));
-        try {
-            songleXmlParser.parse(stream);
-//            Log.e("",songleXmlParser.parse(stream).get(0).artist);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        Log.e("NetworkActivity",result);
-        */
-    }
+     }
 
     @Override
     public NetworkInfo getActiveNetworkInfo() {

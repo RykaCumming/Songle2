@@ -27,6 +27,7 @@ public class NotAsEasyFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_not_as_easy, container, false);
         final String url = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+FivePageActivity.songno+"/map4.kml";
+        final String lyricsurl = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+FivePageActivity.songno+"/words.txt";
         Button btnOpen = (Button) view.findViewById(R.id.btnOpen);
 
         btnOpen.setOnClickListener(new View.OnClickListener() {
