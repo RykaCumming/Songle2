@@ -59,6 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG ="MapsActivity";
     private ArrayList<String> wordlist = new ArrayList<>();
 
+    private String global_lyrics;
 
     private NetworkFragment m1NetworkFragment;
   //  private DictionaryFragment mDictionaryFragment;
@@ -85,7 +86,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         Intent intent = getIntent();
-        String kmlfile = intent.getStringExtra("Resultkml");
+        String kmlfile = intent.getStringExtra("Resultkmlfromdown");
+        String lyrics = intent.getStringExtra("ResultLyrics");
+        global_lyrics=lyrics;
+//        Log.i("Resultkmlfromdown",kmlfile);
+        Log.i("lyrics11",lyrics);
 
      //   WordListFragment wordListFragment = WordListFragment.newInstance();
 //        wordListFragment.show(getFragmentManager(), "hello");
@@ -172,20 +177,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 //            split[i]=entries.get(i).getCoordinate().split(",");
         }
+//        String[] lines = global_lyrics.split();
 /*        splits=split;
-        Log.i("Shouldbezero",split[2][0]);
-        Log.i("Shouldbezero",split[2][1]);
-        Log.i("Shouldbezero",split[2][2]);
-        Log.i("Shouldbezero",split[2][3]);
-        Log.i("-3something",split[0][0]);
-        Log.i("-3something",split[0][1]);
-        Log.i("-3something",split[0][2]);
-        Log.i("-3something",split[0][3]);
-        Log.i("55something",split[1][0]);
-        Log.i("55something",split[1][1]);
-        Log.i("55something",split[1][2]);
-        Log.i("55something",split[1][3]);
-*/
+
 
 
 

@@ -126,7 +126,7 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
             String kmlfile = main_Intent.getStringExtra("kmlfromDownloadLyricActivity");
             Intent tomap = new Intent(NetworkActivity.this, MapsActivity.class);
             tomap.putExtra("ResultLyrics",result);
-            tomap.putExtra("",kmlfile);
+            tomap.putExtra("Resultkmlfromdown",kmlfile);
             startActivity(tomap);
  //           Intent intent = new Intent(NetworkActivity.this, MapsActivity.class);
  //           intent.putExtra("Keepkmlstring",);
