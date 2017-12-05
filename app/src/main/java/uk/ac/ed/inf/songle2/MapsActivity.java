@@ -177,10 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 //            split[i]=entries.get(i).getCoordinate().split(",");
         }
-//        String[] lines = global_lyrics.split();
-/*        splits=split;
-
-
+ //       String[] lines = global_lyrics
 
 
     }
