@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -46,7 +45,6 @@ public class ScrollingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scrolling2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("             CHOOSE YOUR SONG");
-        Log.e("Scrolling","made it");
         Intent intent = getIntent();
         String result = intent.getStringExtra("Resultxml");
         mParseTask.execute(result);

@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -44,12 +45,12 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List;import android.os.Vibrator;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    public List<Marker> mMarkers = new ArrayList<Marker>();
-    public ArrayList<SongleKmlParser.Entry> thelist; //static?
+    private List<Marker> mMarkers = new ArrayList<Marker>();
+    private ArrayList<SongleKmlParser.Entry> thelist; //static?
     public  String[][] splits;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -76,7 +77,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ParseTask mParseTask= new ParseTask();
     //LyricsDownloadTask mlyricsdownloadtask = new LyricsDownloadTask();
 
+    public class Pair {
+        private int a;
+        private int b;
 
+        public Pair(int first,int second) {
+            this.a=first;
+            this.b=second;
+        }
+        public int getA(){
+            return a;
+        }
+        public int getB(){
+            return b;
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,19 +108,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        Log.i("Resultkmlfromdown",kmlfile);
         Log.i("lyrics11",lyrics);
 
-     //   WordListFragment wordListFragment = WordListFragment.newInstance();
-//        wordListFragment.show(getFragmentManager(), "hello");
-    //    Button dictionary = findViewById(R.id.dictionary);
-    //    dictionary.setOnClickListener(new Button.OnClickListener() {
-    //        @Override
-     //       public void onClick(View v) {
-      //          Snackbar mySnackbar = Snackbar.make(v,"Word Collected: little", 6000);
-       //         mySnackbar.show();
-               // WordListFragment wordListFragment = WordListFragment.newInstance();
-              //  wordListFragment.show(getFragmentManager(), "hello");
-      //      }
-   //     });
-
+        //WordListFragment wordListFragment = new WordListFragment();
+ //       wordListFragment.show(getFragmentManager(), "hello");
+        final FragmentManager fm = getSupportFragmentManager();
+        Button dictionary = findViewById(R.id.dictionary2);
+        dictionary.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WordListFragment newFragment = new WordListFragment();
+//                DialogFragment newFragment = WordListFragment.newInstance();
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("wordlist",wordlist);
+                newFragment.setArguments(bundle);
+//                newFragment.setArguments();
+                newFragment.show(fm, "Dialog Fragment");
+            }
+        });
+        mParseTask.execute(kmlfile);
 
        /* FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -115,7 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 */
       //  transaction.replace(R.id.dictionaryfragment2,mDictionaryFragment);
 
-        Button button4 = (Button)findViewById(R.id.dictionary2);
+ /*       Button button4 = (Button)findViewById(R.id.dictionary2);
         button4.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
@@ -127,8 +147,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 }
-        );
-        mParseTask.execute(kmlfile);
+        );*/
+
     }
 
     public void updateFromDownload(ArrayList<SongleKmlParser.Entry> entries) throws UnsupportedEncodingException, XmlPullParserException, IOException {
@@ -148,7 +168,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(Double.parseDouble(lat),Double.parseDouble(lng)));
             Marker marker = mMap.addMarker(markerOptions);
-            marker.setTitle(entries.get(i).getName());
+            marker.setTitle(entries.get(i).getName()); // (e.g. 11:3)
+            String[] stringnums = entries.get(i).getName().split(":");
+            int[] lineandnum = new int[stringnums.length];
+            Pair pair =new Pair(Integer.parseInt(stringnums[0]),Integer.parseInt(stringnums[1]));
+            for (int k=0;k<stringnums.length;k++)
+            {
+                lineandnum[k]=Integer.parseInt(stringnums[k]); //we now have an array of new int[] {11,3}
+            }
+            marker.setTag(entries.get(i).getName());
+//            Log.i("qazxs",marker.getTag().);
+
             if (entries.get(i).getStyleUrl().equals("#unclassified"))
             {
                 marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.wht_blank));
@@ -177,58 +207,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 //            split[i]=entries.get(i).getCoordinate().split(",");
         }
- //       String[] lines = global_lyrics
+        String[] lines = global_lyrics.split("\\r?\\n");
+        for (int i=0;i<lines.length;i++)
+        {
+//            Log.i("testnumber1",lines[i]);
+            String[] separatenums=lines[i].split("\\t");
+            if (separatenums.length>1){
+                String[] words = separatenums[1].split("[^\\w'-]+");
+                int linenumber=i+1;
+                for (int j=0;j<words.length;j++)
+                { //possibly do "if word[j] is ==" " then disregard"
+                    int wordnumber=j+1;
+                    for (Marker marker:mMarkers)
+                    {
+                        if (marker.getTag().equals(linenumber+":"+wordnumber)) //is the equals operation causing the runtime to be so high! make it individual integers? faster
+                        {
+                            marker.setSnippet(words[j]);
+                            Log.i("testnumber4",marker.getSnippet());
+                        }
+                    }
+//                    Log.i("testnumber3",words[j] +" "+linenumber+":"+wordnumber);
+                }
+//                Log.i("testnumber2",words[0] + " "+i+1);
+            }
+            else {}
+
+ /*           String[] words = lines[i].split(" ");
+            Log.i("Thisisaword",words[0]);
+            Log.i("Thisisaword",words[1]);
+            Log.i("Thisisaword",words[2]);
+            Log.i("Thisisaword",words[3]); */
+
+        }
 
 
     }
-    /*public class LyricsDownloadTask extends AsyncTask<String, Void, LyricsDownloadTask.Result {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected ArrayList<SongleKmlParser.Entry> doInBackground(String... res) { //        mParseTask.execute(result);
-
-            String res1 = res[0];
-            Log.i("res1",res1);
-            InputStream stream = null;
-
-            try {
-                stream = new ByteArrayInputStream(res1.getBytes(StandardCharsets.UTF_8.name()));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            ArrayList<SongleKmlParser.Entry> entries = new ArrayList<>();
-            try {
-                entries = songleKmlParser.parse(stream);
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return entries;
-        }
-        @Override
-        protected void onPostExecute(ArrayList<SongleKmlParser.Entry> entries) {
-            //     super.onPostExecute(entries);
-            try {
-                updateFromDownload(entries);
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-
-    }
-*/
-
-
-
 
     public class ParseTask extends AsyncTask<String, Void, ArrayList<SongleKmlParser.Entry>> {
 
@@ -270,9 +283,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 e.printStackTrace();
             }
 
-
         }
-
     }
 
 
@@ -373,6 +384,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng centre_of_GS = new LatLng(55.944425, -3.188396);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centre_of_GS, 15.2f));
+
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                wordlist.add((marker.getSnippet()));
+                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word Collected: "+marker.getSnippet(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                // Vibrate for 200 milliseconds
+                v.vibrate(200);
+                marker.remove();
+                return true;
+            }
+        });
 
         try { //Visualise current position with small blue circle
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
