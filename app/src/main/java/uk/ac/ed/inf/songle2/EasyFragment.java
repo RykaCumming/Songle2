@@ -49,8 +49,6 @@ public class EasyFragment extends Fragment {
         final String url = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+ num +"/map5.kml";
         final String lyricsurl = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+ num + "/words.txt";
         Button btnOpen = (Button) view.findViewById(R.id.btnOpen);
-
-
         btnOpen.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NetworkActivity.class);

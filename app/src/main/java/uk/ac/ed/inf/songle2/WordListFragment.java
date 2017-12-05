@@ -87,7 +87,8 @@ public class WordListFragment extends DialogFragment {
         View rootView = inflater.inflate(R.layout.fragment_word_list, container,
                 false);
         ArrayList<String> thewordlist = getArguments().getStringArrayList("wordlist");
-        listView2 = rootView.findViewById(R.id.list_view_fragm);listView2.setAdapter(adapter);
+        listView2 = rootView.findViewById(R.id.list_view_fragm);
+        listView2.setAdapter(adapter);
         adapter=new ArrayAdapter(rootView.getContext(),android.R.layout.simple_list_item_1,thewordlist);
         listView2.setAdapter(adapter);
         getDialog().setTitle("Word List");

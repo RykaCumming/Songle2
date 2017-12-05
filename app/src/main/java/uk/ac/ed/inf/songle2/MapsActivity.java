@@ -75,7 +75,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     SongleKmlParser songleKmlParser = new SongleKmlParser();
     ParseTask mParseTask= new ParseTask();
-    //LyricsDownloadTask mlyricsdownloadtask = new LyricsDownloadTask();
 
     public class Pair {
         private int a;
@@ -105,13 +104,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String kmlfile = intent.getStringExtra("Resultkmlfromdown");
         String lyrics = intent.getStringExtra("ResultLyrics");
         global_lyrics=lyrics;
-//        Log.i("Resultkmlfromdown",kmlfile);
-        Log.i("lyrics11",lyrics);
 
         //WordListFragment wordListFragment = new WordListFragment();
  //       wordListFragment.show(getFragmentManager(), "hello");
         final FragmentManager fm = getSupportFragmentManager();
-        Button dictionary = findViewById(R.id.dictionary2);
+        Button dictionary = findViewById(R.id.dictionary);
         dictionary.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,10 +117,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("wordlist",wordlist);
                 newFragment.setArguments(bundle);
-//                newFragment.setArguments();
                 newFragment.show(fm, "Dialog Fragment");
             }
         });
+        final FragmentManager fm2 = getSupportFragmentManager();
+        Button guess = findViewById(R.id.guess);
+        guess.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GuessFragment guessFragment = new GuessFragment();
+                guessFragment.show(fm2, "Dialog Fragment 2");
+            }
+        });
+
         mParseTask.execute(kmlfile);
 
        /* FragmentManager fragmentManager = getSupportFragmentManager();
@@ -156,7 +162,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         thelist=entries;
         Log.i("entries.size()",entries.size()+"");
 
-//        String[][] split =new String[3][entries.size()];
         for (int i=0;i<entries.size();i++) {
             String[] coordinates = entries.get(i).getCoordinate().split(",");
             String lat = coordinates[1];
@@ -231,16 +236,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                Log.i("testnumber2",words[0] + " "+i+1);
             }
             else {}
-
- /*           String[] words = lines[i].split(" ");
-            Log.i("Thisisaword",words[0]);
-            Log.i("Thisisaword",words[1]);
-            Log.i("Thisisaword",words[2]);
-            Log.i("Thisisaword",words[3]); */
-
         }
-
-
     }
 
     public class ParseTask extends AsyncTask<String, Void, ArrayList<SongleKmlParser.Entry>> {

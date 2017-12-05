@@ -38,6 +38,9 @@ public class FivePageActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     public static String songno="";
+    public static String glob_artist="";
+    public static String glob_title="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,14 @@ public class FivePageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_five_page);
         Intent intent = getIntent();
         String songnumber = intent.getStringExtra("ScrollingActivity");
-        String[] ph1 =songnumber.split("\\r?\\n"); //split on newline
-        String[] ph2 =ph1[0].split(" "); //ph[1]=02
-        songno=ph2[1];
+        String[] lines =songnumber.split("\\r?\\n"); //split on newline
+        String[] songnum =lines[0].split(" "); //ph[1]=02 //why does this work?
+        glob_artist =lines[1].substring(8,lines[1].length());
+        glob_title = lines[2].substring(7,lines[2].length());
+        Log.i("globular",glob_artist);
+        Log.i("globular",glob_title);
+        songno= songnum[1];
+
         Log.i("songno",songno);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("        CHOOSE YOUR DIFFICULTY");
@@ -66,16 +74,6 @@ public class FivePageActivity extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
- //       fab.setOnClickListener(new View.OnClickListener() {
- //           @Override
- //           public void onClick(View view) {
- //               Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
- //                       .setAction("Action", null).show();
-//            }
-  //      });
-
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

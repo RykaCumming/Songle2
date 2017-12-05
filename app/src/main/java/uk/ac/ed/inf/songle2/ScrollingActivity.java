@@ -78,8 +78,8 @@ public class ScrollingActivity extends AppCompatActivity {
             else
             {*/
                 list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"\n" +
-                        "ARTIST: "+spaces(parsedresult.get(i).getArtist())+"\n"+
-                        "TITLE: " +spaces(parsedresult.get(i).getTitle()));
+                        "ARTIST: "+(parsedresult.get(i).getArtist())+"\n"+ //spaces before (parsed
+                        "TITLE: " +(parsedresult.get(i).getTitle()));       //spaces before (parsed
            // }
 
         }
