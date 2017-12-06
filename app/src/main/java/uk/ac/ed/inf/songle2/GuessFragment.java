@@ -36,8 +36,11 @@ public class GuessFragment extends DialogFragment {
                 Intent intent = new Intent(getActivity(), WinGame.class);
                 EditText editText = (EditText) rootView.findViewById(R.id.edit_text_guess);
                 String answer = editText.getText().toString();
-                if (answer.equals(FivePageActivity.glob_title)) {
+                if (answer.equals(FivePageActivity.glob_title) || answer.toLowerCase().equals(FivePageActivity.glob_title.toLowerCase())) {
                     startActivity(intent);
+                }
+                else {
+
                 }
 
             }

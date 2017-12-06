@@ -4,11 +4,14 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -46,6 +49,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;import android.os.Vibrator;
+import android.widget.TextView;import java.util.concurrent.TimeUnit;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -213,6 +217,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            split[i]=entries.get(i).getCoordinate().split(",");
         }
         String[] lines = global_lyrics.split("\\r?\\n");
+        String[][] words = new String[lines.length][];
+        for (int i=0;i<lines.length;i++)
+        {
+            String[] separatenums = lines[i].split("\\t");
+            if (separatenums.length>1) { //avoid index out of bounds
+                words[i] = separatenums[1].split("[^\\w'-]+");
+            }
+//            if (i>=35 &&i<=40 &&words[i].length>=3) {
+//                Log.i("finaltest2",words[i][0]);
+//                Log.i("finaltest2",words[i][1]);
+         //       Log.i("finaltest2",words[i][2]);
+//            }
+        }
+        for (Marker marker :mMarkers)
+        {
+//            String[] p = marker.getTag().toString().split(":");
+            Object tag = marker.getTag();
+            String stringtag =String.valueOf(tag);
+            String[] pair = stringtag.split(":");
+            int i = Integer.parseInt(pair[0])-1;
+            int j = Integer.parseInt(pair[1])-1;
+            String theword = words[i][j];
+//            Log.i("theword",words[i][j]);
+            marker.setSnippet(theword);
+//            Log.i("test5",marker.getTag().toString());
+//            Log.i("test5",marker.getSnippet());
+        }
+
+
+
+/*
         for (int i=0;i<lines.length;i++)
         {
 //            Log.i("testnumber1",lines[i]);
@@ -237,6 +272,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             else {}
         }
+*/
     }
 
     public class ParseTask extends AsyncTask<String, Void, ArrayList<SongleKmlParser.Entry>> {
@@ -371,9 +407,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * EXTRA STATEMENT
      */
     @Override
+    public void onBackPressed() {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Please use home button!", Snackbar.LENGTH_LONG);
+        snackbar.show();
+
+    }
+    private static final String FORMAT = "%02d:%02d:%02d";
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(TAG,"OnMapReady");
         mMap = googleMap;
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean timer_allowed = sharedPref.getBoolean(SettingsActivity.key_pref_timer,false);
+                //getString(SettingsActivity.key_pref_timer, "");
+        Log.i("shareduserpreferences",String.valueOf(timer_allowed));
+
+        if (timer_allowed)
+        {
+            final TextView timer=(TextView)findViewById(R.id.thetimer);
+            new CountDownTimer(30000*60, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+
+                    timer.setText(""+String.format(FORMAT,
+                            TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(
+                                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
+                                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                }
+                public void onFinish() {
+                    timer.setText("done!");
+                }
+            }.start();
+
+        }
+
+
 
 
         // Add a marker in Sydney and move the camera

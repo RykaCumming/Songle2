@@ -71,13 +71,13 @@
             android:label="@string/title_activity_how_to_play"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SettingsActivity2"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_settings2" />
         <activity android:name=".DownloadLyricsActivity" />
         <activity
             android:name=".WinGame"
             android:label="@string/title_activity_win_game"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
