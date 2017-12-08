@@ -1,9 +1,12 @@
 package uk.ac.ed.inf.songle2;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +23,32 @@ public class GuessFragment extends DialogFragment {
                 R.layout.guessword_fragment, container, false);
 
         Button btnOpen = (Button) rootView.findViewById(R.id.btnOpen);
+        final String entry = getArguments().getString("global_entry");
+        Log.i("aaaaaaaaaaa",entry);
+        final String[] entrysplit = entry.split("\\|\\|\\|");
         btnOpen.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), WinGameActivity.class);
                 EditText editText = (EditText) rootView.findViewById(R.id.edit_text_guess);
                 String answer = editText.getText().toString();
-                if (answer.equals(FivePageActivity.glob_title) || answer.toLowerCase().equals(FivePageActivity.glob_title.toLowerCase())) {
+                if (answer.equals(entrysplit[2]) || answer.toLowerCase().equals(entrysplit[2].toLowerCase())) {
+                    intent.putExtra("num",entrysplit[0]);
+                    intent.putExtra("artist",entrysplit[1]);
+                    intent.putExtra("title",entrysplit[2]);
+                    intent.putExtra("url",entrysplit[3]);
                     startActivity(intent);
                 }
                 else {
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage("Incorrect! Try again")
+                            .setCancelable(true)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+
+
+                                }
+                            })
+                            .show();
 
                 }
 

@@ -40,6 +40,8 @@ public class FivePageActivity extends AppCompatActivity {
     public static String songno="";
     public static String glob_artist="";
     public static String glob_title="";
+    public static String url="";
+    public static String global_entry;
 
 
     @Override
@@ -47,19 +49,19 @@ public class FivePageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_five_page);
         Intent intent = getIntent();
-        String songnumber = intent.getStringExtra("ScrollingActivity");
-        String[] lines =songnumber.split("\\r?\\n"); //split on newline
-        String[] songnum =lines[0].split(" "); //ph[1]=02 //why does this work?
-        glob_artist =lines[1].substring(8,lines[1].length());
-        glob_title = lines[2].substring(7,lines[2].length());
-        Log.i("globular",glob_artist);
-        Log.i("globular",glob_title);
-        songno= songnum[1];
-
+        String entry= intent.getStringExtra("ScrollingActivity");
+        global_entry=entry;
+        String[] entrysplit =entry.split("\\|\\|\\|" );
+        songno=entrysplit[0];
+        glob_artist = entrysplit[1];
+        glob_title =entrysplit[2];
+        url =entrysplit[3];
         Log.i("songno",songno);
+        Log.i("songno",glob_artist);
+        Log.i("songno",glob_title);
+        Log.i("songno",url);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setTitle("        CHOOSE YOUR DIFFICULTY");
-       // setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -114,22 +116,21 @@ public class FivePageActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return EasyFragment.newInstance("01");
+                    return EasyFragment.newInstance(songno,global_entry);
                 case 1:
-                    return new NotAsEasyFragment();
+                    return NotAsEasyFragment.newInstance(songno,global_entry);
                 case 2:
-                    return new MediumFragment();
+                    return MediumFragment.newInstance(songno,global_entry);
                 case 3:
-                    return new HardFragment();
+                    return HardFragment.newInstance(songno,global_entry);
                 case 4:
-                    return new VeryHardFragment();
+                    return VeryHardFragment.newInstance(songno,global_entry);
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 5;
         }
         @Override

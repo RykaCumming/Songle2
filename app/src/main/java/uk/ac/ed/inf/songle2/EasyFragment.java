@@ -24,12 +24,14 @@ import android.widget.EditText;
 
 
 public class EasyFragment extends Fragment {
-    String num;
+    private String num;
+    private String global_entry;
 
-    public static EasyFragment newInstance(String num){
+    public static EasyFragment newInstance(String num,String entry){
         EasyFragment easyFragment = new EasyFragment();
         Bundle args = new Bundle();
         args.putString("num", num);
+        args.putString("entry",entry);
         easyFragment.setArguments(args);
         return easyFragment;
     }
@@ -39,6 +41,7 @@ public class EasyFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         num = bundle.getString("num");
+        global_entry=bundle.getString("entry");
     }
 
     @Override
@@ -54,6 +57,7 @@ public class EasyFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), NetworkActivity.class);
                 intent.putExtra("file", url);
                 intent.putExtra("lyrics", lyricsurl);
+                intent.putExtra("entry",global_entry);
                 startActivity(intent);
             }
         });

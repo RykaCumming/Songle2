@@ -1,6 +1,8 @@
 package uk.ac.ed.inf.songle2;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-
+    MediaPlayer mediaPlayer;
     @Override
     public void onBackPressed()
     {
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
         moveTaskToBack(true);
         finish();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,9 +29,7 @@ public class MainActivity extends AppCompatActivity {
         if (intent.getStringExtra("NetworkActivity")!=null) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "No internet connection.", Snackbar.LENGTH_LONG);
         snackbar.show();
-
         }
-
 
     }
 /*    ConnectivityManager cm =

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -69,15 +70,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String global_lyrics;
 
     private NetworkFragment m1NetworkFragment;
-  //  private DictionaryFragment mDictionaryFragment;
-    // Whether there is a Wi-Fi connection.
-    private static boolean wifiConnected = false;
-    // Whether there is a mobile connection.
-    private static boolean mobileConnected = false;
-    // Whether the display should be refreshed.
-    public static boolean refreshDisplay = true;
-    public static String sPref = null;
     private boolean mDownloading = false;
+
+    //-------------Information about the current song
+    private String global_entry;
+    private String num;
+    private String artist;
+    private String title;
+    private String url;
+
+    private String difficulty;
+
+    private MediaPlayer mediaPlayer;
 
     SongleKmlParser songleKmlParser = new SongleKmlParser();
     ParseTask mParseTask= new ParseTask();
@@ -111,6 +115,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String lyrics = intent.getStringExtra("ResultLyrics");
         global_lyrics=lyrics;
 
+        //calculate the difficulty
+
+        String entry =intent.getStringExtra("entry");
+        String[] entrysplit = entry.split("\\|\\|\\|");
+        num=entrysplit[0];
+        artist=entrysplit[1];
+        title=entrysplit[2];
+        url=entrysplit[3];
+        global_entry=entry;
+
+
+
         //WordListFragment wordListFragment = new WordListFragment();
  //       wordListFragment.show(getFragmentManager(), "hello");
         final FragmentManager fm = getSupportFragmentManager();
@@ -119,7 +135,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 WordListFragment newFragment = new WordListFragment();
-//                DialogFragment newFragment = WordListFragment.newInstance();
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("wordlist",wordlist);
                 newFragment.setArguments(bundle);
@@ -132,6 +147,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 GuessFragment guessFragment = new GuessFragment();
+                Bundle bundle = new Bundle();
+                Log.i("aaaaaaaaaaa",global_entry);
+                bundle.putString("global_entry",global_entry);
+                guessFragment.setArguments(bundle);
                 guessFragment.show(fm2, "Dialog Fragment 2");
             }
         });
@@ -160,8 +179,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
         );*/
-
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean MUSIC_ALLOWED = sharedPrefs.getBoolean("key_pref_music",true);
+
+        if (MUSIC_ALLOWED) {
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundenergy);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.start();
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.stop();
+//        mediaPlayer.release();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.stop();
+        mediaPlayer.release();
+    }
+
 
     public void updateFromDownload(ArrayList<SongleKmlParser.Entry> entries) throws UnsupportedEncodingException, XmlPullParserException, IOException {
         Log.i("firstentry",entries.get(0).getCoordinate());

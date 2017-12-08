@@ -72,10 +72,8 @@ public class ScrollingActivity extends AppCompatActivity {
         }
         return result;
     }
-    public void updateFromDownload(ArrayList<SongleXmlParser.Entry> parsedresult) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
+    public void updateFromDownload(final ArrayList<SongleXmlParser.Entry> parsedresult) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
         Log.e("parsed",parsedresult.get(0).getNumber());
-
-
         listView = findViewById(R.id.list_view); //recyclerview
         for (int i=0;i<parsedresult.size();i++)
         {
@@ -87,8 +85,8 @@ public class ScrollingActivity extends AppCompatActivity {
             else
             {*/
                 list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"\n" +
-                        "ARTIST: "+(parsedresult.get(i).getArtist())+"\n"+ //spaces before (parsed
-                        "TITLE: " +(parsedresult.get(i).getTitle()));       //spaces before (parsed
+                        "ARTIST: "+spaces(parsedresult.get(i).getArtist())+"\n"+ //spaces before (parsed
+                        "TITLE: " +spaces(parsedresult.get(i).getTitle()));       //spaces before (parsed
            // }
 
         }
@@ -100,7 +98,11 @@ public class ScrollingActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent intent = new Intent(ScrollingActivity.this,FivePageActivity.class);
-                intent.putExtra("ScrollingActivity",listView.getItemAtPosition(position).toString());
+                String parsedresultstring = parsedresult.get(position).getNumber()+"|||"+
+                        parsedresult.get(position).getArtist()+"|||"+
+                        parsedresult.get(position).getTitle()+"|||"+
+                        parsedresult.get(position).getLink();
+                intent.putExtra("ScrollingActivity",parsedresultstring);
    //             intent.putExtra("thesongnum",listView.getItemAtPosition(position).toString());
                 startActivity(intent);
 

@@ -28,5 +28,10 @@
         android:dependency="notifications_new_message"
         android:key="key_pref_mobile"
         android:title="@string/pref_mobile" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:dependency="notifications_new_message"
+        android:key="key_pref_music"
+        android:title="@string/pref_music" />
 
 </PreferenceScreen>

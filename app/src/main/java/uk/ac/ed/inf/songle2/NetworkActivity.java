@@ -63,7 +63,6 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
         String file = intent.getStringExtra("file");
         String words = intent.getStringExtra("lyrics");
         main_Intent=intent;
-        Log.i("urlmadeit",file);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean MOBILE_ALLOWED = sharedPrefs.getBoolean("key_pref_mobile",false);
         ismobileallowed=MOBILE_ALLOWED;
@@ -94,28 +93,33 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
         }
         if (result.contains("<?xml version=") && !(result.contains("kml xmlns")))
         {
+            //result is xml
             Intent intent = new Intent(NetworkActivity.this, ScrollingActivity.class);
             intent.putExtra("Resultxml",result);
             startActivity(intent);
         }
         else if (result.contains("kml xmlns"))
         {
-              Intent intent = new Intent(NetworkActivity.this, DownloadLyricsActivity.class);
-              intent.putExtra("Resultkml", result);
-              startActivity(intent);
+            //result is kml
+            Intent fromdifficulty = getIntent();
+            String entry = fromdifficulty.getStringExtra("entry");
+            Intent intent = new Intent(NetworkActivity.this, DownloadLyricsActivity.class);
+            intent.putExtra("Resultkml", result);
+            intent.putExtra("entry",entry);
+            Log.i("entrynetwork",entry);
+            startActivity(intent);
         }
         else
         {
+            //result is Lyrics
+            Intent fromdownlyrcs = getIntent();
+            String entry =fromdownlyrcs.getStringExtra("entry");
             String kmlfile = main_Intent.getStringExtra("kmlfromDownloadLyricActivity");
             Intent tomap = new Intent(NetworkActivity.this, MapsActivity.class);
             tomap.putExtra("ResultLyrics",result);
             tomap.putExtra("Resultkmlfromdown",kmlfile);
+            tomap.putExtra("entry",entry);
             startActivity(tomap);
- //           Intent intent = new Intent(NetworkActivity.this, MapsActivity.class);
- //           intent.putExtra("Keepkmlstring",);
- //           intent.putExtra("Lyrics",result);
-//            main_Intent.putExtra("ResultLyrics",result);
-
         }
      }
 

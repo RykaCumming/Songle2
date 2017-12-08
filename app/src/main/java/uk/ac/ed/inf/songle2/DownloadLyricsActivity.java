@@ -12,11 +12,13 @@ public class DownloadLyricsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_download_lyrics);
         Intent intent = getIntent();
         String kmlfile = intent.getStringExtra("Resultkml");
-//        final String lyricsurl = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+ FivePageActivity.songno + "/words.txt";
-        final String lyricsurl = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+ FivePageActivity.songno + "/words.txt";
+        String entry =intent.getStringExtra("entry");
+        String[] splitentry = entry.split("\\|\\|\\|");
+        final String lyricsurl = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/"+splitentry[0] + "/words.txt";
         Intent intent2 =new Intent(DownloadLyricsActivity.this, NetworkActivity.class);
         intent2.putExtra("file",lyricsurl);
         intent2.putExtra("kmlfromDownloadLyricActivity",kmlfile);
+        intent2.putExtra("entry",entry);
         startActivity(intent2);
     }
 }
