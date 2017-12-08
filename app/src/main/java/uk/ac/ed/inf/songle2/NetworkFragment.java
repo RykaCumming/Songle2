@@ -4,10 +4,12 @@ package uk.ac.ed.inf.songle2;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
@@ -22,6 +24,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -40,7 +45,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class NetworkFragment extends Fragment {
     public static final String TAG = "NetworkFragment";
-
+    private boolean MOBILE_ALLOWED;
     private static final String URL_KEY = "urlkey";
 
     private DownloadCallback mCallback;
@@ -52,13 +57,14 @@ public class NetworkFragment extends Fragment {
      * Static initializer for NetworkFragment that sets the URL of the host it will be downloading
      * from.
      */
-    public static NetworkFragment getInstance(FragmentManager fragmentManager, String url) {
+    public static NetworkFragment getInstance(FragmentManager fragmentManager, String url,boolean is_mobile_allowed) {
         NetworkFragment networkFragment = (NetworkFragment) fragmentManager
                 .findFragmentByTag(NetworkFragment.TAG);
         if (networkFragment == null) {
             networkFragment = new NetworkFragment();
             Bundle args = new Bundle();
             args.putString(URL_KEY, url);
+//            args.putBoolean("msgfromnetfrag",is_mobile_allowed);
             networkFragment.setArguments(args);
             fragmentManager.beginTransaction().add(networkFragment, TAG).commit();
         }
@@ -69,9 +75,12 @@ public class NetworkFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mUrlString = getArguments().getString(URL_KEY);
+//        MOBILE_ALLOWED = getArguments().getBoolean("key");
+//        Log.i("ismobileallowed",String.valueOf(MOBILE_ALLOWED));
         // Retain this Fragment across configuration changes in the host Activity.
         setRetainInstance(true);
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -151,11 +160,13 @@ public class NetworkFragment extends Fragment {
          */
         @Override
         protected void onPreExecute() {
+            Log.i("ismobileallowed",String.valueOf(MOBILE_ALLOWED));
             if (mCallback != null) {
                 NetworkInfo networkInfo = mCallback.getActiveNetworkInfo();
                 if (networkInfo == null || !networkInfo.isConnected() ||
-                        (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                                && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+                        (networkInfo.getType() != ConnectivityManager.TYPE_WIFI && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)
+                        || (!NetworkActivity.ismobileallowed && networkInfo.getType() != ConnectivityManager.TYPE_WIFI)
+                        ) {
                     // If no connectivity, cancel task and update Callback with null data.
                     try {
                         mCallback.updateFromDownload(null);
@@ -170,7 +181,6 @@ public class NetworkFragment extends Fragment {
                 }
             }
         }
-
         /**
          * Defines work to perform on the background thread.
          */
@@ -301,3 +311,4 @@ public class NetworkFragment extends Fragment {
 
 
 }
+//                        || (!MOBILE_ALLOWED && networkInfo.getType() != ConnectivityManager.TYPE_WIFI)

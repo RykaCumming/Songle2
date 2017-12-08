@@ -3,6 +3,7 @@ package uk.ac.ed.inf.songle2;
 import android.content.Intent;
 import android.net.Network;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -40,11 +41,17 @@ public class ScrollingActivity extends AppCompatActivity {
     ArrayAdapter adapter;
 
     @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(ScrollingActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("             CHOOSE YOUR SONG");
+//        toolbar.setTitle("             CHOOSE YOUR SONG");
         Intent intent = getIntent();
         String result = intent.getStringExtra("Resultxml");
         mParseTask.execute(result);
@@ -67,6 +74,8 @@ public class ScrollingActivity extends AppCompatActivity {
     }
     public void updateFromDownload(ArrayList<SongleXmlParser.Entry> parsedresult) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
         Log.e("parsed",parsedresult.get(0).getNumber());
+
+
         listView = findViewById(R.id.list_view); //recyclerview
         for (int i=0;i<parsedresult.size();i++)
         {

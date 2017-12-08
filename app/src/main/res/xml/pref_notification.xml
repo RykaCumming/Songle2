@@ -23,5 +23,10 @@
         android:dependency="notifications_new_message"
         android:key="key_pref_timer"
         android:title="@string/pref_timer" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:dependency="notifications_new_message"
+        android:key="key_pref_mobile"
+        android:title="@string/pref_mobile" />
 
 </PreferenceScreen>

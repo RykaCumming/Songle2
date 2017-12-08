@@ -58,7 +58,7 @@ public class FivePageActivity extends AppCompatActivity {
 
         Log.i("songno",songno);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("        CHOOSE YOUR DIFFICULTY");
+//        toolbar.setTitle("        CHOOSE YOUR DIFFICULTY");
        // setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.

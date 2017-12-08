@@ -12,8 +12,6 @@ import android.view.View;
 
 public class SettingsActivity extends Activity {
 
-    public static final String key_pref_timer = "key_pref_timer";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

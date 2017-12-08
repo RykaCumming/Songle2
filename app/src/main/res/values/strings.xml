@@ -74,6 +74,7 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_timer">30 Minute Timer</string>
+    <string name="pref_mobile">Allow mobile data usage</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="large_text">

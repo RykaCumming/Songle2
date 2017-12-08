@@ -1,8 +1,10 @@
 package uk.ac.ed.inf.songle2;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -408,8 +410,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onBackPressed() {
-        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Please use home button!", Snackbar.LENGTH_LONG);
-        snackbar.show();
+        new AlertDialog.Builder(this)
+                .setMessage("Return to Main Menu?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(MapsActivity.this, MainActivity.class);
+                        startActivity(intent);
+
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+//        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Please use home button!", Snackbar.LENGTH_LONG);
+//        snackbar.show();
 
     }
     private static final String FORMAT = "%02d:%02d:%02d";
@@ -418,14 +432,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i(TAG,"OnMapReady");
         mMap = googleMap;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean timer_allowed = sharedPref.getBoolean(SettingsActivity.key_pref_timer,false);
+        boolean timer_allowed = sharedPref.getBoolean("key_pref_timer",false);
                 //getString(SettingsActivity.key_pref_timer, "");
         Log.i("shareduserpreferences",String.valueOf(timer_allowed));
 
         if (timer_allowed)
         {
             final TextView timer=(TextView)findViewById(R.id.thetimer);
-            new CountDownTimer(30000*60, 1000) {
+            new CountDownTimer(1800000, 1000) {
 
                 public void onTick(long millisUntilFinished) {
 
@@ -437,7 +451,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
                 }
                 public void onFinish() {
-                    timer.setText("done!");
+                    timer.setText("Time up!");
                 }
             }.start();
 
@@ -446,7 +460,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-        // Add a marker in Sydney and move the camera
+        // move camera to centre of george square
         LatLng centre_of_GS = new LatLng(55.944425, -3.188396);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centre_of_GS, 15.2f));

@@ -12,21 +12,7 @@ import android.app.FragmentManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.LocationServices;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 
 
@@ -62,27 +48,12 @@ import java.util.Calendar;
 import java.util.List;
 
 public class NetworkActivity extends FragmentActivity implements DownloadCallback {
-    public static final String WIFI = "Wi-Fi";
-    public static final String ANY = "Any";
-    private static final String URL = "http://stackoverflow.com/feeds/tag?tagnames=android&sort=newest";
-    private static final String URLSong1Map1 = "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/01/map5.kml";
 
-   // public static final String  = "String1";
-
-    public static final String TAG = "NetworkActivity";
-
-    // Whether there is a Wi-Fi connection.
-    private static boolean wifiConnected = false;
-    // Whether there is a mobile connection.
-    private static boolean mobileConnected = false;
-    // Whether the display should be refreshed.
-    public static boolean refreshDisplay = true;
-    public static String sPref = null;
     public Intent main_Intent;
-    private NetworkFragment mNetworkFragment;
-    SongleXmlParser songleXmlParser = new SongleXmlParser();
+    private NetworkFragment mNetworkFragment;//= new NetworkFragment();// = new NetworkFragment();
     private boolean mDownloading = false;
     public boolean kml_finished =false;
+    public static boolean ismobileallowed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +64,14 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
         String words = intent.getStringExtra("lyrics");
         main_Intent=intent;
         Log.i("urlmadeit",file);
-        mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), file);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean MOBILE_ALLOWED = sharedPrefs.getBoolean("key_pref_mobile",false);
+        ismobileallowed=MOBILE_ALLOWED;
+//        Log.i("",String.valueOf(MOBILE_ALLOWED));
+//        Bundle bundle = new Bundle();
+//        bundle.putBoolean("key",MOBILE_ALLOWED);
+//        mNetworkFragment.setArguments(bundle);
+        mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), file,MOBILE_ALLOWED);
         startDownload();
 /*      kml_finished=true;
         mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), words);
@@ -109,6 +87,11 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
     }
     @Override
     public void updateFromDownload(String result) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
+        if (result==null) {
+            Intent intent = new Intent(NetworkActivity.this, MainActivity.class);
+            intent.putExtra("NetworkActivity","NetworkActivity");
+            startActivity(intent);
+        }
         if (result.contains("<?xml version=") && !(result.contains("kml xmlns")))
         {
             Intent intent = new Intent(NetworkActivity.this, ScrollingActivity.class);
@@ -174,16 +157,4 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
         }
     }
 
-    // Uses AsyncTask to download the XML feed from stackoverflow.com.
-    public void loadPage() {
-
-        if((sPref.equals(ANY)) && (wifiConnected || mobileConnected)) {
-            new DownloadXmlTask().execute(URL);
-        }
-        else if ((sPref.equals(WIFI)) && (wifiConnected)) {
-            new DownloadXmlTask().execute(URL);
-        } else {
-            // show error
-        }
-    }
 }
