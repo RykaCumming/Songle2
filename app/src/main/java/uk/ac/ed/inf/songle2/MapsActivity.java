@@ -110,8 +110,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .build();
         }
         Intent intent = getIntent();
+
         kml_url = intent.getStringExtra("kml_url");
-        Log.i("kml_url",kml_url);
+        Log.i("kml_url", String.valueOf(kml_url.charAt(kml_url.length()-5)));
+        if (String.valueOf(kml_url.charAt(kml_url.length()-5)).equals("5")) {
+            difficulty ="Easiest";
+        }
+        else if(String.valueOf(kml_url.charAt(kml_url.length()-5)).equals("4")){
+            difficulty ="Easy";
+        }
+        else if(String.valueOf(kml_url.charAt(kml_url.length()-5)).equals("3")){
+            difficulty ="Regular";
+        }
+        else if(String.valueOf(kml_url.charAt(kml_url.length()-5)).equals("2")){
+            difficulty ="Hard";
+        }
+        else if (String.valueOf(kml_url.charAt(kml_url.length()-5)).equals("1")){
+            difficulty ="Expert";
+        }
+
         String kmlfile = intent.getStringExtra("Resultkmlfromdown");
         String lyrics = intent.getStringExtra("ResultLyrics");
         global_lyrics=lyrics;
@@ -160,8 +177,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 GuessFragment guessFragment = new GuessFragment();
                 Bundle bundle = new Bundle();
-                Log.i("aaaaaaaaaaa",global_entry);
                 bundle.putString("global_entry",global_entry);
+                bundle.putString("difficulty",difficulty);
                 guessFragment.setArguments(bundle);
                 guessFragment.show(fm2, "Dialog Fragment 2");
             }
@@ -206,11 +223,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         SharedPreferences settings = getSharedPreferences("mySettings", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
-        Log.i("savedvalues",num);
-        for (String s:wordlistset)
-        {
-            Log.i("savedvaluesm",s);
-        }
         editor.putStringSet(num,wordlistset);
         editor.putString(num+"_kml_url",kml_url);
         editor.apply();

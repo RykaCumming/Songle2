@@ -78,21 +78,24 @@ public class ScrollingActivity extends AppCompatActivity {
     }
 
     public void updateFromDownload(final ArrayList<SongleXmlParser.Entry> parsedresult) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
-        Log.e("parsed",parsedresult.get(0).getNumber());
+        Log.i("parsed",parsedresult.get(0).getNumber());
+        final SharedPreferences settings = getSharedPreferences("mySettings",MODE_PRIVATE);
+//        final String kml_url_of_saved_data= sharedPref.getString(parsedresult.get(position).getNumber()+"_kml_url",null);
         listView = findViewById(R.id.list_view); //recyclerview
         for (int i=0;i<parsedresult.size();i++)
         {
-   /*         if (i==0||i==2||i==3) {
-                list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"   Completed on Easy"+"\n" +
+            if ((settings.getString(parsedresult.get(i).getNumber()+"NumberWin",null)!=null) && settings.getString(parsedresult.get(i).getNumber()+"NumberWin",null).equals(parsedresult.get(i).getNumber())) {
+                list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"\n" +
                         "ARTIST: "+parsedresult.get(i).getArtist()+"\n"+
-                        "TITLE: " +parsedresult.get(i).getTitle());
+                        "TITLE: " +parsedresult.get(i).getTitle()+"\n"+
+                        "RECENTLY COMPLETED ON: "+settings.getString(parsedresult.get(i).getNumber()+"DifficultyWin",null));
             }
             else
-            {*/
+            {
                 list.add("SONG"+ " " + parsedresult.get(i).getNumber()+"\n" +
                         "ARTIST: "+spaces(parsedresult.get(i).getArtist())+"\n"+ //spaces before (parsed
                         "TITLE: " +spaces(parsedresult.get(i).getTitle()));       //spaces before (parsed
-           // }
+            }
 
         }
 

@@ -24,7 +24,8 @@ public class GuessFragment extends DialogFragment {
 
         Button btnOpen = (Button) rootView.findViewById(R.id.btnOpen);
         final String entry = getArguments().getString("global_entry");
-        Log.i("aaaaaaaaaaa",entry);
+        final String difficulty = getArguments().getString("difficulty");
+        Log.i("thisisdifficulty",difficulty);
         final String[] entrysplit = entry.split("\\|\\|\\|");
         btnOpen.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -36,6 +37,7 @@ public class GuessFragment extends DialogFragment {
                     intent.putExtra("artist",entrysplit[1]);
                     intent.putExtra("title",entrysplit[2]);
                     intent.putExtra("url",entrysplit[3]);
+                    intent.putExtra("difficulty",difficulty);
                     startActivity(intent);
                 }
                 else {
