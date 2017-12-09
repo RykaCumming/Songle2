@@ -11,6 +11,7 @@ public class DownloadLyricsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_lyrics);
         Intent intent = getIntent();
+        String url = intent.getStringExtra("kml_url");
         String kmlfile = intent.getStringExtra("Resultkml");
         String entry =intent.getStringExtra("entry");
         String[] splitentry = entry.split("\\|\\|\\|");
@@ -19,6 +20,7 @@ public class DownloadLyricsActivity extends AppCompatActivity {
         intent2.putExtra("file",lyricsurl);
         intent2.putExtra("kmlfromDownloadLyricActivity",kmlfile);
         intent2.putExtra("entry",entry);
+        intent2.putExtra("kml_url", url);
         startActivity(intent2);
     }
 }

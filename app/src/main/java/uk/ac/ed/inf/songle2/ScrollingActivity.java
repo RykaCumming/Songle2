@@ -1,8 +1,12 @@
 package uk.ac.ed.inf.songle2;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Network;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -72,6 +76,7 @@ public class ScrollingActivity extends AppCompatActivity {
         }
         return result;
     }
+
     public void updateFromDownload(final ArrayList<SongleXmlParser.Entry> parsedresult) throws UnsupportedEncodingException,XmlPullParserException,IOException  {
         Log.e("parsed",parsedresult.get(0).getNumber());
         listView = findViewById(R.id.list_view); //recyclerview
@@ -95,17 +100,63 @@ public class ScrollingActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Intent intent = new Intent(ScrollingActivity.this,FivePageActivity.class);
-                String parsedresultstring = parsedresult.get(position).getNumber()+"|||"+
-                        parsedresult.get(position).getArtist()+"|||"+
-                        parsedresult.get(position).getTitle()+"|||"+
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                final SharedPreferences sharedPref = getSharedPreferences("mySettings",MODE_PRIVATE);
+                final String kml_url_of_saved_data= sharedPref.getString(parsedresult.get(position).getNumber()+"_kml_url",null);
+                final String parsedresultstring = parsedresult.get(position).getNumber() + "|||" +
+                        parsedresult.get(position).getArtist() + "|||" +
+                        parsedresult.get(position).getTitle() + "|||" +
                         parsedresult.get(position).getLink();
-                intent.putExtra("ScrollingActivity",parsedresultstring);
-   //             intent.putExtra("thesongnum",listView.getItemAtPosition(position).toString());
-                startActivity(intent);
+                final SharedPreferences sharedPref2 = PreferenceManager.getDefaultSharedPreferences(ScrollingActivity.this);
+                boolean timer_allowed = sharedPref2.getBoolean("key_pref_timer",false);
 
+                if (sharedPref.getStringSet(parsedresult.get(position).getNumber(), null)!=null &&!timer_allowed) {
+
+                    new AlertDialog.Builder(ScrollingActivity.this)
+                            .setMessage("You have previously stored data on this song")
+                            .setCancelable(true)
+                            .setPositiveButton("Resume Game", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Intent intent = new Intent(ScrollingActivity.this, NetworkActivity.class);
+                                    intent.putExtra("file",kml_url_of_saved_data);
+                                    intent.putExtra("entry",parsedresultstring);
+                                    Log.i("aaaaaaaeeeee",kml_url_of_saved_data);
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("New Game", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    sharedPref.edit().remove(parsedresult.get(position).getNumber()).commit();; // The song number corresponding to the position on listview e.g. "04"
+                                    sharedPref.edit().remove(parsedresult.get(position).getNumber()+"_kml_url").commit();
+                                    Intent intent = new Intent(ScrollingActivity.this, FivePageActivity.class);
+                                    intent.putExtra("ScrollingActivity", parsedresultstring);
+                                    startActivity(intent);
+                                }
+                            })
+                            .show();
+                }
+                else if((sharedPref.getStringSet(parsedresult.get(position).getNumber(), null)!=null)&&timer_allowed)
+                {
+                    new AlertDialog.Builder(ScrollingActivity.this)
+                            .setMessage("Timed Attack mode can only be played if you delete your previous data for this map. Is this ok?")
+                            .setCancelable(true)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    sharedPref.edit().remove(parsedresult.get(position).getNumber()).commit();; // The song number corresponding to the position on listview e.g. "04"
+                                    sharedPref.edit().remove(parsedresult.get(position).getNumber()+"_kml_url").commit();
+                                    Intent intent = new Intent(ScrollingActivity.this, FivePageActivity.class);
+                                    intent.putExtra("ScrollingActivity", parsedresultstring);
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+                }
+                else {
+                    Intent intent = new Intent(ScrollingActivity.this, FivePageActivity.class);
+                    intent.putExtra("ScrollingActivity", parsedresultstring);
+                    startActivity(intent);
+                }
             }
         });
     }

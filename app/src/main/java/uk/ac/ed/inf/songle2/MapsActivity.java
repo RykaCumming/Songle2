@@ -29,6 +29,7 @@ import android.widget.Button;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.common.ConnectionResult;
@@ -51,14 +52,19 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;import android.os.Vibrator;
-import android.widget.TextView;import java.util.concurrent.TimeUnit;
+import android.widget.TextView;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,LocationListener
+{
     private List<Marker> mMarkers = new ArrayList<Marker>();
     private ArrayList<SongleKmlParser.Entry> thelist; //static?
-    public  String[][] splits;
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
@@ -66,11 +72,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mLastLocation;
     private static final String TAG ="MapsActivity";
     private ArrayList<String> wordlist = new ArrayList<>();
-
+    private Set<String> wordlistset = new HashSet<>();
+    private String kml_url;
     private String global_lyrics;
-
-    private NetworkFragment m1NetworkFragment;
-    private boolean mDownloading = false;
+    private Set<String> global_saved_words;
 
     //-------------Information about the current song
     private String global_entry;
@@ -80,28 +85,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String url;
 
     private String difficulty;
+    private boolean timer_allowed;
 
     private MediaPlayer mediaPlayer;
 
     SongleKmlParser songleKmlParser = new SongleKmlParser();
     ParseTask mParseTask= new ParseTask();
 
-    public class Pair {
-        private int a;
-        private int b;
-
-        public Pair(int first,int second) {
-            this.a=first;
-            this.b=second;
-        }
-        public int getA(){
-            return a;
-        }
-        public int getB(){
-            return b;
-        }
-
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,13 +100,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        if (mGoogleApiClient == null)
+        {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
         Intent intent = getIntent();
+        kml_url = intent.getStringExtra("kml_url");
+        Log.i("kml_url",kml_url);
         String kmlfile = intent.getStringExtra("Resultkmlfromdown");
         String lyrics = intent.getStringExtra("ResultLyrics");
         global_lyrics=lyrics;
-
-        //calculate the difficulty
-
         String entry =intent.getStringExtra("entry");
         String[] entrysplit = entry.split("\\|\\|\\|");
         num=entrysplit[0];
@@ -125,10 +123,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         url=entrysplit[3];
         global_entry=entry;
 
+        SharedPreferences sharedPref = getSharedPreferences("mySettings",MODE_PRIVATE);
 
+        Set<String> saved_words = sharedPref.getStringSet(num, null);
+        global_saved_words = saved_words;
+        if (saved_words!=null) { //If there is data from previous play
+            global_saved_words = saved_words;
+            wordlistset = saved_words;
+            for (String s : global_saved_words)
+            {
+                Log.i("saved_words11",s);
+            }
+            for (String s : wordlistset)
+            {
+                String[] split = s.split("\\|\\|\\|");
+                wordlist.add(split[0]);
+            }
+        }
 
-        //WordListFragment wordListFragment = new WordListFragment();
- //       wordListFragment.show(getFragmentManager(), "hello");
         final FragmentManager fm = getSupportFragmentManager();
         Button dictionary = findViewById(R.id.dictionary);
         dictionary.setOnClickListener(new Button.OnClickListener() {
@@ -155,30 +167,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        mParseTask.execute(kmlfile);
-
-       /* FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        WordListFragment wordListFragment = new WordListFragment();
-        transaction.add(R.id.fragment_container,wordListFragment);
-        transaction.commit();
-        Button dictionary = (Button) findViewById(R.id.dictionary);
-*/
-      //  transaction.replace(R.id.dictionaryfragment2,mDictionaryFragment);
-
- /*       Button button4 = (Button)findViewById(R.id.dictionary2);
-        button4.setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
-
-
-        Snackbar mySnackbar = Snackbar.make(v,"Word Collected: little", 6000);
-        mySnackbar.show();
-
-
-                    }
-                }
-        );*/
+        //the code below should only be executed if we have no previous user data for this map, in which case this activity would have been called from Network Activity
+        //We know that every time network activity starts this activity, it will always send a value for ResultLyrics
+        if (intent.getStringExtra("ResultLyrics")!=null) {
+            mParseTask.execute(kmlfile);
+        }
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
     }
     @Override
     protected void onResume() {
@@ -195,13 +193,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onPause() {
         super.onPause();
-        mediaPlayer.stop();
+        if (mediaPlayer.isPlaying()) {mediaPlayer.stop();}
 //        mediaPlayer.release();
     }
     @Override
     protected void onStop() {
         super.onStop();
-        mediaPlayer.stop();
+
+        if (mGoogleApiClient.isConnected())
+        {
+            mGoogleApiClient.disconnect();
+        }
+        SharedPreferences settings = getSharedPreferences("mySettings", MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        Log.i("savedvalues",num);
+        for (String s:wordlistset)
+        {
+            Log.i("savedvaluesm",s);
+        }
+        editor.putStringSet(num,wordlistset);
+        editor.putString(num+"_kml_url",kml_url);
+        editor.apply();
+
+//        mediaPlayer.stop();
         mediaPlayer.release();
     }
 
@@ -225,7 +239,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             marker.setTitle(entries.get(i).getName()); // (e.g. 11:3)
             String[] stringnums = entries.get(i).getName().split(":");
             int[] lineandnum = new int[stringnums.length];
-            Pair pair =new Pair(Integer.parseInt(stringnums[0]),Integer.parseInt(stringnums[1]));
             for (int k=0;k<stringnums.length;k++)
             {
                 lineandnum[k]=Integer.parseInt(stringnums[k]); //we now have an array of new int[] {11,3}
@@ -254,13 +267,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 marker.setIcon(BitmapDescriptorFactory.fromResource(R.mipmap.red_stars));
             }
             else {}
-
             mMarkers.add(marker);
-
-//            mMap.addMarker(new LatLng())
-
-//            split[i]=entries.get(i).getCoordinate().split(",");
-        }
+            //following for loop deals with if marker has been found already
+/*
+            if (global_saved_words!=null) {
+                Log.i("globalwordsisempty","globalwordsisempty");
+                boolean has_marker_been_found_already = false;
+                for (String word_and_tag : wordlistset) {
+                    String[] split = word_and_tag.split("\\|\\|\\|");                    //word_and_tag is of form "Figaro|||25:3"
+                    Log.i("nuuuuuuu",marker.getTitle());
+                    Log.i("nuuuuuuu",split[1]);
+                    if (marker.getTitle().equals(split[1])) {                                //each marker's getTitle is of form 25:3
+                        has_marker_been_found_already = true;
+                    }
+                }
+                if (!has_marker_been_found_already) {
+                    mMarkers.add(marker);
+                }
+            }
+            else{
+                mMarkers.add(marker);
+            }
+*/
+      }
         String[] lines = global_lyrics.split("\\r?\\n");
         String[][] words = new String[lines.length][];
         for (int i=0;i<lines.length;i++)
@@ -289,35 +318,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            Log.i("test5",marker.getTag().toString());
 //            Log.i("test5",marker.getSnippet());
         }
-
-
-
-/*
-        for (int i=0;i<lines.length;i++)
-        {
-//            Log.i("testnumber1",lines[i]);
-            String[] separatenums=lines[i].split("\\t");
-            if (separatenums.length>1){
-                String[] words = separatenums[1].split("[^\\w'-]+");
-                int linenumber=i+1;
-                for (int j=0;j<words.length;j++)
-                { //possibly do "if word[j] is ==" " then disregard"
-                    int wordnumber=j+1;
-                    for (Marker marker:mMarkers)
-                    {
-                        if (marker.getTag().equals(linenumber+":"+wordnumber)) //is the equals operation causing the runtime to be so high! make it individual integers? faster
-                        {
-                            marker.setSnippet(words[j]);
-                            Log.i("testnumber4",marker.getSnippet());
-                        }
+        if (global_saved_words!=null) {
+            for (Marker marker : mMarkers) {
+                for (String word_and_tag : global_saved_words) {
+                    String[] split = word_and_tag.split("\\|\\|\\|");
+                    if (marker.getTitle().equals(split[1])) {
+                        marker.remove();
                     }
-//                    Log.i("testnumber3",words[j] +" "+linenumber+":"+wordnumber);
                 }
-//                Log.i("testnumber2",words[0] + " "+i+1);
             }
-            else {}
         }
-*/
     }
 
     public class ParseTask extends AsyncTask<String, Void, ArrayList<SongleKmlParser.Entry>> {
@@ -362,32 +372,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
     }
-
-
-
-    /**
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-
-    }
-*/
-
-    public void sendMessage(View view) {
-    //    Intent intent = new Intent(this, NetworkActivity.class);
-    //    startActivity(intent);
-        Snackbar mySnackbar = Snackbar.make(view,"Word Collected: little", 2500);
-        mySnackbar.show();
-    }
     protected void createLocationRequest() {
         Log.i(TAG,"OnLocationRequest");
         LocationRequest mLocationRequest = new LocationRequest();
@@ -397,12 +381,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Can we access the user's current location?
         int permissionCheck = ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED){
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (LocationListener) this); //wtf
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (LocationListener) this);
         }
 
     }
 
-//    @Override
+    @Override
     public void onConnected(Bundle connectionHint) {        //protected void?
         Log.i(TAG,"OnConnected");
         try { createLocationRequest(); }
@@ -419,14 +403,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i(TAG,"OnConnected");
     }
 
-    //@Override
+    @Override
     public void onLocationChanged(Location current)
     {
         Log.i(TAG,"OnLocationChanged");
         System.out.println("onLocationChanged] Lat/long now (" +
                 String.valueOf(current.getLatitude())+","+
                 String.valueOf(current.getLongitude())+")");
-        //do something with current location.
     }
 
     public void onConnectionSuspended(int flag) {
@@ -469,13 +452,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        snackbar.show();
 
     }
-    private static final String FORMAT = "%02d:%02d:%02d";
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.i(TAG,"OnMapReady");
         mMap = googleMap;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean timer_allowed = sharedPref.getBoolean("key_pref_timer",false);
+        timer_allowed = sharedPref.getBoolean("key_pref_timer",false);
                 //getString(SettingsActivity.key_pref_timer, "");
         Log.i("shareduserpreferences",String.valueOf(timer_allowed));
 
@@ -486,12 +468,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 public void onTick(long millisUntilFinished) {
 
-                    timer.setText(""+String.format(FORMAT,
-                            TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
-                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(
-                                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
-                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
-                                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                    timer.setText(""+String.format("%02d:%02d",
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
                 }
                 public void onFinish() {
                     timer.setText("Time up!");
@@ -512,13 +491,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                wordlist.add((marker.getSnippet()));
-                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word Collected: "+marker.getSnippet(), Snackbar.LENGTH_LONG);
-                snackbar.show();
-                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                // Vibrate for 200 milliseconds
-                v.vibrate(200);
-                marker.remove();
+                LatLng markerLatLng = marker.getPosition();
+                Location markerLocation =new Location("");
+                markerLocation.setLatitude(markerLatLng.latitude);
+                markerLocation.setLongitude(markerLatLng.longitude);
+                if (mLastLocation.distanceTo(markerLocation)<=30) {
+                    wordlist.add((marker.getSnippet()));
+                    wordlistset.add((marker.getSnippet())+"|||"+marker.getTitle());
+                    Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word Collected: " + marker.getSnippet(), Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 200 milliseconds
+                    v.vibrate(200);
+
+                    marker.remove();
+                }
+                else {
+                    Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word "+marker.getTitle()+"         Get closer to collect!",1000);
+                    snackbar.show();
+
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLng(markerLatLng));
+                }
                 return true;
             }
         });

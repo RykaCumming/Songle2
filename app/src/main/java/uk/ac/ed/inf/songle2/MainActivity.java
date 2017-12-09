@@ -2,12 +2,17 @@ package uk.ac.ed.inf.songle2;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     MediaPlayer mediaPlayer;
@@ -25,6 +30,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        SharedPreferences sharedPref = getSharedPreferences("mySettings",MODE_PRIVATE);
+        if (sharedPref.getStringSet("01", null)!=null) {
+            Set<String> savedvalues = new HashSet<>();
+            savedvalues= sharedPref.getStringSet("01", null);
+            for (String s : savedvalues) {
+                Log.i("mainmenuvalues", s);
+            }
+        }
         Intent intent =getIntent();
         if (intent.getStringExtra("NetworkActivity")!=null) {
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "No internet connection.", Snackbar.LENGTH_LONG);

@@ -103,7 +103,9 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
             //result is kml
             Intent fromdifficulty = getIntent();
             String entry = fromdifficulty.getStringExtra("entry");
+            String url =fromdifficulty.getStringExtra("file");
             Intent intent = new Intent(NetworkActivity.this, DownloadLyricsActivity.class);
+            intent.putExtra("kml_url",url);
             intent.putExtra("Resultkml", result);
             intent.putExtra("entry",entry);
             Log.i("entrynetwork",entry);
@@ -114,11 +116,13 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
             //result is Lyrics
             Intent fromdownlyrcs = getIntent();
             String entry =fromdownlyrcs.getStringExtra("entry");
+            String url = fromdownlyrcs.getStringExtra("kml_url");
             String kmlfile = main_Intent.getStringExtra("kmlfromDownloadLyricActivity");
             Intent tomap = new Intent(NetworkActivity.this, MapsActivity.class);
             tomap.putExtra("ResultLyrics",result);
             tomap.putExtra("Resultkmlfromdown",kmlfile);
             tomap.putExtra("entry",entry);
+            tomap.putExtra("kml_url",url);
             startActivity(tomap);
         }
      }
