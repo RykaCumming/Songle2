@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="uk.ac.ed.inf.songle2.ScrollingActivity"
+    android:background="@drawable/background"
     tools:showIn="@layout/activity_scrolling2">
 
     <TextView

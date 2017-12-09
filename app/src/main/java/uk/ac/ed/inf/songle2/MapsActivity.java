@@ -507,7 +507,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Location markerLocation =new Location("");
                 markerLocation.setLatitude(markerLatLng.latitude);
                 markerLocation.setLongitude(markerLatLng.longitude);
-                if (mLastLocation.distanceTo(markerLocation)<=30) {
+                if (mLastLocation!=null && mLastLocation.distanceTo(markerLocation)<=30) {
                     wordlist.add((marker.getSnippet()));
                     wordlistset.add((marker.getSnippet())+"|||"+marker.getTitle());
                     Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word Collected: " + marker.getSnippet(), Snackbar.LENGTH_LONG);
