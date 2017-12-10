@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class WinGameActivity extends AppCompatActivity {
@@ -31,6 +32,16 @@ public class WinGameActivity extends AppCompatActivity {
         String url = intent.getStringExtra("url");
         String difficulty = intent.getStringExtra("difficulty");
         TextView textview = findViewById(R.id.textView5);
+        Button return_home = findViewById(R.id.button7);
+        return_home.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WinGameActivity.this, MainActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
         SharedPreferences settings = getSharedPreferences("mySettings", MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(num+"NumberWin",num);

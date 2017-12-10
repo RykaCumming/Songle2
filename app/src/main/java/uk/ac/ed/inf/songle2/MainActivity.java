@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        //SharedPreferences Test --not important and can be deleted
         SharedPreferences sharedPref = getSharedPreferences("mySettings",MODE_PRIVATE);
         if (sharedPref.getStringSet("01", null)!=null) {
             Set<String> savedvalues = new HashSet<>();
@@ -40,30 +39,19 @@ public class MainActivity extends AppCompatActivity {
         }
         Intent intent =getIntent();
         if (intent.getStringExtra("NetworkActivity")!=null) {
-        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "No internet connection.", Snackbar.LENGTH_LONG);
-        snackbar.show();
+            //If the message with tag "NetworkActivity" is not null, this means that this activity has just been called from the Network Activity
+            //The only case that this will happen is if the network activity fails i.e. there is no internet connection
+            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "No internet connection.", Snackbar.LENGTH_LONG);
+            snackbar.show();
         }
 
     }
-/*    ConnectivityManager cm =
-            (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-    boolean isConnected = activeNetwork != null &&
-            activeNetwork.isConnectedOrConnecting(); */
 
     public void sendMessage(View view) {
-
-  //      if (!isConnected){
-        //    Snackbar mySnackbar = Snackbar.make(view,"There is no internet connection", 2500);
-           // mySnackbar.show();
-   //     }
-    //    else {
-
+        //
             Intent intent = new Intent(this, NetworkActivity.class);
             intent.putExtra("file", "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/songs.xml");
             startActivity(intent);
-     //   }
     }
     public void HowToPlayMessage(View view) {
         Intent intent = new Intent(this, HowToPlayActivity.class);

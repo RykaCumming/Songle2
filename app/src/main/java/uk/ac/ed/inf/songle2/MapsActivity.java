@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -84,6 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String title;
     private String url;
 
+    int total_num_of_markers;
+
     private String difficulty;
     private boolean timer_allowed;
 
@@ -100,7 +103,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
         if (mGoogleApiClient == null)
         {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -280,6 +282,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             else {}
             mMarkers.add(marker);
+            total_num_of_markers++;
             //following for loop deals with if marker has been found already
 /*
             if (global_saved_words!=null) {
@@ -336,6 +339,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String[] split = word_and_tag.split("\\|\\|\\|");
                     if (marker.getTitle().equals(split[1])) {
                         marker.remove();
+                        total_num_of_markers--;
                     }
                 }
             }
@@ -397,7 +401,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
-
     @Override
     public void onConnected(Bundle connectionHint) {        //protected void?
         Log.i(TAG,"OnConnected");
@@ -460,8 +463,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 })
                 .setNegativeButton("No", null)
                 .show();
-//        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Please use home button!", Snackbar.LENGTH_LONG);
-//        snackbar.show();
 
     }
     @Override
@@ -486,6 +487,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 public void onFinish() {
                     timer.setText("Time up!");
+                    new AlertDialog.Builder(MapsActivity.this)
+                            .setMessage("You are out of time!")
+                            .setCancelable(false)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Intent intent = new Intent(MapsActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                }
+                            })
+                            .show();
                 }
             }.start();
 
@@ -507,7 +518,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Location markerLocation =new Location("");
                 markerLocation.setLatitude(markerLatLng.latitude);
                 markerLocation.setLongitude(markerLatLng.longitude);
-                if (mLastLocation!=null && mLastLocation.distanceTo(markerLocation)<=30) {
+                if (mLastLocation!=null && mLastLocation.distanceTo(markerLocation)<=1500) {
                     wordlist.add((marker.getSnippet()));
                     wordlistset.add((marker.getSnippet())+"|||"+marker.getTitle());
                     Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word Collected: " + marker.getSnippet(), Snackbar.LENGTH_LONG);
@@ -515,8 +526,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     // Vibrate for 200 milliseconds
                     v.vibrate(200);
-
                     marker.remove();
+                    total_num_of_markers--;
+                    if (total_num_of_markers==0&&(difficulty.equals("Easiest")||difficulty.equals("Easy"))) {
+                        Intent intent = new Intent(MapsActivity.this, WinGameActivity.class);
+                        intent.putExtra("num",num);
+                        intent.putExtra("artist",artist);
+                        intent.putExtra("title",title);
+                        intent.putExtra("url",url);
+                        intent.putExtra("difficulty",difficulty);
+                        startActivity(intent);
+
+                    }
                 }
                 else {
                     Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word "+marker.getTitle()+"         Get closer to collect!",1000);

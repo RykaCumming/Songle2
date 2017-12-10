@@ -15,13 +15,20 @@
         android:id="@+id/button"
         android:layout_width="140dp"
         android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="116dp"
-        android:layout_marginTop="280dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/buttonshape"
         android:onClick="sendMessage"
         android:text="Start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.557" />
 
     <TextView
         android:id="@+id/textView"
@@ -46,23 +53,38 @@
         android:id="@+id/button2"
         android:layout_width="140dp"
         android:layout_height="70dp"
-        android:layout_marginLeft="116dp"
-        android:layout_marginTop="352dp"
-        android:onClick="HowToPlayMessage"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/buttonshape"
+        android:onClick="HowToPlayMessage"
         android:text="HOW TO PLAY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.733" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="140dp"
         android:layout_height="70dp"
-        android:layout_marginLeft="116dp"
-        android:layout_marginTop="424dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/buttonshape"
         android:onClick="SettingsMessage"
         android:text="OPTIONS"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.908" />
+
 </android.support.constraint.ConstraintLayout>

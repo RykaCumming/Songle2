@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="uk.ac.ed.inf.songle2.ScrollingActivity"
-    android:background="@drawable/background2"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="25dp">
 
@@ -21,16 +20,16 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" >
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
+                android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="SELECT YOUR SONG"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:id="@+id/toolbar_title" />
+                android:textStyle="bold" />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
@@ -38,18 +37,17 @@
     <ListView
         android:id="@+id/list_view"
         style="@style/Base.V11.Theme.AppCompat.Dialog"
-        android:layout_width="305dp"
+        android:layout_width="325dp"
         android:layout_height="475dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
         android:background="?android:attr/textColorHighlightInverse"
         android:cacheColorHint="@android:color/holo_orange_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.36"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbar"
         app:layout_constraintVertical_bias="1.0" />
 </android.support.constraint.ConstraintLayout>

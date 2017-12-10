@@ -141,7 +141,7 @@ public class ScrollingActivity extends AppCompatActivity {
                 else if((sharedPref.getStringSet(parsedresult.get(position).getNumber(), null)!=null)&&timer_allowed)
                 {
                     new AlertDialog.Builder(ScrollingActivity.this)
-                            .setMessage("Timed Attack mode can only be played if you delete your previous data for this map. Is this ok?")
+                            .setMessage("Timed Attack mode can only be played if you delete your previous data for this map. If you have already completed this song, however, this will still be kept track of. Is this ok?")
                             .setCancelable(true)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {

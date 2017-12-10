@@ -7,6 +7,8 @@ import android.view.View;
  * Created by s1540547 on 03/11/17.
  */
 
+//This code was taken from the from developer.android.com to help the difficulty activity a fading effect
+
 public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
     private static final float MIN_SCALE = 0.85f;
     private static final float MIN_ALPHA = 0.5f;

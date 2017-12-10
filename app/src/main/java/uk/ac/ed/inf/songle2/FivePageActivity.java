@@ -70,7 +70,7 @@ public class FivePageActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        mViewPager.setCurrentItem(2);
+        mViewPager.setCurrentItem(0);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 

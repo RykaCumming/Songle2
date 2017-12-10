@@ -22,7 +22,9 @@
         android:defaultValue="false"
         android:dependency="notifications_new_message"
         android:key="key_pref_timer"
-        android:title="@string/pref_timer" />
+        android:title="@string/pref_timer"
+        android:summary="Enables a 30 minute timer"/>
+
     <SwitchPreference
         android:defaultValue="false"
         android:dependency="notifications_new_message"
@@ -32,6 +34,9 @@
         android:defaultValue="true"
         android:dependency="notifications_new_message"
         android:key="key_pref_music"
+        android:summary="Complete more songs to increase the variety of songs that may play during your game. This will increase at 3 correctly guessed songs then yet again at 15 correctly guessed songs."
         android:title="@string/pref_music" />
-
+    <Preference android:title="@string/pref_erase"
+        android:key="key_pref_erase"
+        android:summary="Deletes all previously stored data, including which songs have been completed"/>
 </PreferenceScreen>
