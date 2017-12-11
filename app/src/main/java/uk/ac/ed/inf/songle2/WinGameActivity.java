@@ -2,6 +2,7 @@ package uk.ac.ed.inf.songle2;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class WinGameActivity extends AppCompatActivity {
-
+private MediaPlayer mediaPlayer;
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(WinGameActivity.this, MainActivity.class);
@@ -23,8 +24,8 @@ public class WinGameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_win_game);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.vesperia94hooray);
+        mediaPlayer.start();
         Intent intent =getIntent();
         String num = intent.getStringExtra("num");
         String title = intent.getStringExtra("title");

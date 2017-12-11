@@ -49,10 +49,9 @@ import java.util.List;
 
 public class NetworkActivity extends FragmentActivity implements DownloadCallback {
 
-    public Intent main_Intent;
+    private Intent main_Intent;
     private NetworkFragment mNetworkFragment;//= new NetworkFragment();// = new NetworkFragment();
     private boolean mDownloading = false;
-    public boolean kml_finished =false;
     public static boolean ismobileallowed;
 
     @Override
@@ -66,15 +65,15 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean MOBILE_ALLOWED = sharedPrefs.getBoolean("key_pref_mobile",false);
         ismobileallowed=MOBILE_ALLOWED;
+
 //        Log.i("",String.valueOf(MOBILE_ALLOWED));
 //        Bundle bundle = new Bundle();
 //        bundle.putBoolean("key",MOBILE_ALLOWED);
 //        mNetworkFragment.setArguments(bundle);
+
+
         mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), file,MOBILE_ALLOWED);
         startDownload();
-/*      kml_finished=true;
-        mNetworkFragment = NetworkFragment.getInstance(getFragmentManager(), words);
-        startDownload();*/
     }
 
     private void startDownload() {
@@ -93,23 +92,26 @@ public class NetworkActivity extends FragmentActivity implements DownloadCallbac
         }
         if (result.contains("<?xml version=") && !(result.contains("kml xmlns")))
         {
-            //result is xml
+            //result is xml -> take this string to the scrolling activity where it will be parsed and displayed
             Intent intent = new Intent(NetworkActivity.this, ScrollingActivity.class);
             intent.putExtra("Resultxml",result);
             startActivity(intent);
         }
         else if (result.contains("kml xmlns"))
         {
-            //result is kml
+            //result is kml ->take this string to the download lyrics activity which will in turn come back here and to download lyrics
             Intent fromdifficulty = getIntent();
             String entry = fromdifficulty.getStringExtra("entry");
             String url =fromdifficulty.getStringExtra("file");
-            Intent intent = new Intent(NetworkActivity.this, DownloadLyricsActivity.class);
-            intent.putExtra("kml_url",url);
-            intent.putExtra("Resultkml", result);
-            intent.putExtra("entry",entry);
-            Log.i("entrynetwork",entry);
-            startActivity(intent);
+            // get the kml url and entry from the FivePageActivity (VeryEasy,Easy,Normal etc.)
+
+
+            Intent todownlyrcs = new Intent(NetworkActivity.this, DownloadLyricsActivity.class);
+            todownlyrcs.putExtra("kml_url",url);
+            todownlyrcs.putExtra("Resultkml", result);
+            todownlyrcs.putExtra("entry",entry);
+            //^ we need to bring along the kml url, the downloaded kml string (result) and the entry
+            startActivity(todownlyrcs);
         }
         else
         {

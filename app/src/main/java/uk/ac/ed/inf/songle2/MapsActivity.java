@@ -1,5 +1,5 @@
 package uk.ac.ed.inf.songle2;
-
+import android.support.annotation.VisibleForTesting;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -57,6 +57,7 @@ import java.util.HashSet;
 import java.util.List;import android.os.Vibrator;
 import android.widget.TextView;
 
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -200,11 +201,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean MUSIC_ALLOWED = sharedPrefs.getBoolean("key_pref_music",true);
+        SharedPreferences num_of_songs_data = getSharedPreferences("mySettings",MODE_PRIVATE);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean MUSIC_ALLOWED = settings.getBoolean("key_pref_music",true);
 
         if (MUSIC_ALLOWED) {
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundenergy);
+
+            if (num_of_songs_data.getString("3_or_more_songs",null)==null && num_of_songs_data.getString("15_or_more_songs",null)==null) {
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundukulele);
+
+
+            }
+            else if (num_of_songs_data.getString("3_or_more_songs",null)!=null) {
+                Random random = new Random();
+                int one_or_two = random.nextInt(2) + 1;
+                if (one_or_two==1) {
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundukulele);
+                }
+                else {
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundenergy);
+
+                }
+
+            }
+            else if (num_of_songs_data.getString("15_or_more_songs",null)!=null) {
+                Random random = new Random();
+                int one_or_two_or_three = random.nextInt(3) + 1;
+                if (one_or_two_or_three==1) {
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundukulele);
+                }
+                else if (one_or_two_or_three==2) {
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundenergy);
+                }
+                else {
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.anightofdizzyspells);
+                }
+            }
             mediaPlayer.setLooping(true);
             mediaPlayer.start();
         }
@@ -452,7 +484,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
-                .setMessage("Return to Main Menu?")
+                .setMessage("Return to Main Menu? Your data will be saved.")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -463,7 +495,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 })
                 .setNegativeButton("No", null)
                 .show();
-
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -518,7 +549,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Location markerLocation =new Location("");
                 markerLocation.setLatitude(markerLatLng.latitude);
                 markerLocation.setLongitude(markerLatLng.longitude);
-                if (mLastLocation!=null && mLastLocation.distanceTo(markerLocation)<=1500) {
+                if (mLastLocation!=null && mLastLocation.distanceTo(markerLocation)<=25) {
                     wordlist.add((marker.getSnippet()));
                     wordlistset.add((marker.getSnippet())+"|||"+marker.getTitle());
                     Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word Collected: " + marker.getSnippet(), Snackbar.LENGTH_LONG);

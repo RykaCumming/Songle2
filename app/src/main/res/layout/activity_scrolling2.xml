@@ -33,7 +33,11 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-
+<!--    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView123"
+        android:textSize="20px" android:paddingTop="10dip" android:paddingBottom="10dip"/>-->
     <ListView
         android:id="@+id/list_view"
         style="@style/Base.V11.Theme.AppCompat.Dialog"

@@ -51,8 +51,6 @@ public class NetworkFragment extends Fragment {
     private DownloadCallback mCallback;
     private DownloadTask mDownloadTask;
     private String mUrlString;
-
-
     /**
      * Static initializer for NetworkFragment that sets the URL of the host it will be downloading
      * from.
@@ -64,7 +62,7 @@ public class NetworkFragment extends Fragment {
             networkFragment = new NetworkFragment();
             Bundle args = new Bundle();
             args.putString(URL_KEY, url);
-//            args.putBoolean("msgfromnetfrag",is_mobile_allowed);
+
             networkFragment.setArguments(args);
             fragmentManager.beginTransaction().add(networkFragment, TAG).commit();
         }
@@ -75,8 +73,7 @@ public class NetworkFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mUrlString = getArguments().getString(URL_KEY);
-//        MOBILE_ALLOWED = getArguments().getBoolean("key");
-//        Log.i("ismobileallowed",String.valueOf(MOBILE_ALLOWED));
+        Log.i("ismobileallowed",String.valueOf(MOBILE_ALLOWED));
         // Retain this Fragment across configuration changes in the host Activity.
         setRetainInstance(true);
     }
@@ -160,6 +157,7 @@ public class NetworkFragment extends Fragment {
          */
         @Override
         protected void onPreExecute() {
+
             Log.i("ismobileallowed",String.valueOf(MOBILE_ALLOWED));
             if (mCallback != null) {
                 NetworkInfo networkInfo = mCallback.getActiveNetworkInfo();

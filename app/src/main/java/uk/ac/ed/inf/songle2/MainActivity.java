@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,16 +29,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //SharedPreferences Test --not important and can be deleted
-        SharedPreferences sharedPref = getSharedPreferences("mySettings",MODE_PRIVATE);
-        if (sharedPref.getStringSet("01", null)!=null) {
-            Set<String> savedvalues = new HashSet<>();
-            savedvalues= sharedPref.getStringSet("01", null);
-            for (String s : savedvalues) {
-                Log.i("mainmenuvalues", s);
-            }
-        }
         Intent intent =getIntent();
         if (intent.getStringExtra("NetworkActivity")!=null) {
             //If the message with tag "NetworkActivity" is not null, this means that this activity has just been called from the Network Activity
@@ -44,11 +36,33 @@ public class MainActivity extends AppCompatActivity {
             Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "No internet connection.", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean MUSIC_ALLOWED = settings.getBoolean("key_pref_music",true);
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundukulele);
+        if (MUSIC_ALLOWED){
+            mediaPlayer.start();
+        }
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mediaPlayer.isPlaying())
+        mediaPlayer.stop();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.release();
+    }
+
     public void sendMessage(View view) {
-        //
             Intent intent = new Intent(this, NetworkActivity.class);
             intent.putExtra("file", "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/songs.xml");
             startActivity(intent);
