@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
     private boolean mLocationPermissionGranted = false;
     private Location mLastLocation;
-    private static final String TAG ="MapsActivity";
+    private static final String TAG ="MapsActivity123";
     private ArrayList<String> wordlist = new ArrayList<>();
     private Set<String> wordlistset = new HashSet<>();
     private String kml_url;
@@ -436,11 +436,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(Location current)
     {
-        Log.i(TAG,"OnLocationChanged");
-        System.out.println("onLocationChanged] Lat/long now (" +
+        Log.i(TAG,"onLocationChanged] Lat/long now (" +
                 String.valueOf(current.getLatitude())+","+
                 String.valueOf(current.getLongitude())+")");
-    }
+        mLastLocation=current;
+/*        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLastLocation =
+                    LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        } else {
+            ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+  */  }
 
     public void onConnectionSuspended(int flag) {
         System.out.print(">>>>onConnectionSuspended");
@@ -516,10 +522,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }.start();
 
         }
-
-
-
-
         // move camera to centre of george square
         LatLng centre_of_GS = new LatLng(55.944425, -3.188396);
 
@@ -533,7 +535,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Location markerLocation =new Location("");
                 markerLocation.setLatitude(markerLatLng.latitude);
                 markerLocation.setLongitude(markerLatLng.longitude);
-                if (mLastLocation!=null && mLastLocation.distanceTo(markerLocation)<=25) {
+                if (mLastLocation!=null && mLastLocation.distanceTo(markerLocation)<=30) {
                     wordlist.add((marker.getSnippet()));
                     wordlistset.add((marker.getSnippet())+"|||"+marker.getTitle());
                     Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Word Collected: " + marker.getSnippet(), Snackbar.LENGTH_LONG);
