@@ -5,18 +5,17 @@
     <SwitchPreference
         android:defaultValue="true"
         android:key="notifications_new_message"
-        android:title="@string/pref_title_new_message_notifications" />
+        android:title="@string/pref_settings" />
 
     <!-- Allows the user to choose a ringtone in the 'notification' category. -->
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
-    <RingtonePreference
-        android:defaultValue="content://settings/system/notification_sound"
+    <SwitchPreference
+        android:defaultValue="false"
         android:dependency="notifications_new_message"
-        android:key="notifications_new_message_ringtone"
-        android:ringtoneType="notification"
-        android:title="@string/pref_title_ringtone" />
-
+        android:key="key_pref_hints"
+        android:title="Enable Hints"
+        android:summary="Gives the song for free if all words are collected. Easy difficulties only."/>
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <SwitchPreference
         android:defaultValue="false"
@@ -24,7 +23,6 @@
         android:key="key_pref_timer"
         android:title="@string/pref_timer"
         android:summary="Enables a 30 minute timer"/>
-
     <SwitchPreference
         android:defaultValue="false"
         android:dependency="notifications_new_message"

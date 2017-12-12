@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-
 @VisibleForTesting
 public class ScrollingActivity extends AppCompatActivity {
 
@@ -147,7 +146,6 @@ public class ScrollingActivity extends AppCompatActivity {
                                     Intent intent = new Intent(ScrollingActivity.this, NetworkActivity.class);
                                     intent.putExtra("file",kml_url_of_saved_data);
                                     intent.putExtra("entry",parsedresultstring);
-                                    Log.i("aaaaaaaeeeee",kml_url_of_saved_data);
                                     startActivity(intent);
                                 }
                             })

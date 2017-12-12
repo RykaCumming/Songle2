@@ -3,14 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="uk.ac.ed.inf.songle2.ScrollingActivity"
+    android:background="@drawable/paper"
     android:theme="@style/AppTheme.NoActionBar">
+
     <ListView
         android:id="@+id/list_view_fragm"
-        style="@style/Base.V11.Theme.AppCompat.Dialog"
+        style="@style/Widget.AppCompat.ListView"
         android:layout_width="380dp"
         android:layout_height="575dp"
         android:layout_marginTop="1dp"
-        android:background="?android:attr/textColorHighlightInverse"
+        android:background="@drawable/paper"
         android:cacheColorHint="@android:color/holo_orange_light"
         tools:layout_editor_absoluteY="72dp" />
 <!--

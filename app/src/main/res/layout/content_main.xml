@@ -25,17 +25,18 @@
         android:text="Start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.035"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.557" />
+        app:layout_constraintVertical_bias="0.386" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="200dp"
         android:layout_height="64dp"
         android:layout_marginLeft="92dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="80dp"
         android:fontFamily="@font/luckiest_guy"
         android:gravity="center"
         android:text="SONGLE"
@@ -43,11 +44,11 @@
         android:textColorHighlight="?android:attr/colorPressedHighlight"
         android:textColorHint="@android:color/holo_orange_dark"
         android:textColorLink="@android:color/holo_orange_dark"
-        android:textSize="36sp"
+        android:textSize="45sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:fontFamily="@font/luckiest_guy"
-        tools:textSize="36sp" />
+        tools:textSize="45sp" />
 
     <Button
         android:id="@+id/button2"
@@ -63,10 +64,11 @@
         android:text="HOW TO PLAY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.733" />
+        app:layout_constraintVertical_bias="0.386" />
 
     <Button
         android:id="@+id/button3"
@@ -85,6 +87,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.908" />
+        app:layout_constraintVertical_bias="0.632" />
 
 </android.support.constraint.ConstraintLayout>

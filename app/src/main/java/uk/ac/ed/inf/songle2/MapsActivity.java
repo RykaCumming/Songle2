@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -283,14 +284,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             markerOptions.position(new LatLng(Double.parseDouble(lat),Double.parseDouble(lng)));
             Marker marker = mMap.addMarker(markerOptions);
             marker.setTitle(entries.get(i).getName()); // (e.g. 11:3)
+
+    //not used
             String[] stringnums = entries.get(i).getName().split(":");
             int[] lineandnum = new int[stringnums.length];
             for (int k=0;k<stringnums.length;k++)
             {
                 lineandnum[k]=Integer.parseInt(stringnums[k]); //we now have an array of new int[] {11,3}
             }
+    //
             marker.setTag(entries.get(i).getName());
-//            Log.i("qazxs",marker.getTag().);
 
             if (entries.get(i).getStyleUrl().equals("#unclassified"))
             {
@@ -315,27 +318,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             else {}
             mMarkers.add(marker);
             total_num_of_markers++;
-            //following for loop deals with if marker has been found already
-/*
-            if (global_saved_words!=null) {
-                Log.i("globalwordsisempty","globalwordsisempty");
-                boolean has_marker_been_found_already = false;
-                for (String word_and_tag : wordlistset) {
-                    String[] split = word_and_tag.split("\\|\\|\\|");                    //word_and_tag is of form "Figaro|||25:3"
-                    Log.i("nuuuuuuu",marker.getTitle());
-                    Log.i("nuuuuuuu",split[1]);
-                    if (marker.getTitle().equals(split[1])) {                                //each marker's getTitle is of form 25:3
-                        has_marker_been_found_already = true;
-                    }
-                }
-                if (!has_marker_been_found_already) {
-                    mMarkers.add(marker);
-                }
-            }
-            else{
-                mMarkers.add(marker);
-            }
-*/
       }
         String[] lines = global_lyrics.split("\\r?\\n");
         String[][] words = new String[lines.length][];
@@ -343,7 +325,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             String[] separatenums = lines[i].split("\\t");
             if (separatenums.length>1) { //avoid index out of bounds
-                words[i] = separatenums[1].split("[^\\w'-]+");
+                words[i] = separatenums[1].split("[^\\w'-]+"); //split on everything except alphanumerics and ' and -
             }
 //            if (i>=35 &&i<=40 &&words[i].length>=3) {
 //                Log.i("finaltest2",words[i][0]);
@@ -353,7 +335,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         for (Marker marker :mMarkers)
         {
-//            String[] p = marker.getTag().toString().split(":");
+
             Object tag = marker.getTag();
             String stringtag =String.valueOf(tag);
             String[] pair = stringtag.split(":");
@@ -365,7 +347,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            Log.i("test5",marker.getTag().toString());
 //            Log.i("test5",marker.getSnippet());
         }
-        if (global_saved_words!=null) {
+    //code below removes the markers which have already been collected on a previously saved playthrough
+        if (global_saved_words!=null) { //if there is previous data.
             for (Marker marker : mMarkers) {
                 for (String word_and_tag : global_saved_words) {
                     String[] split = word_and_tag.split("\\|\\|\\|");
@@ -500,7 +483,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         Log.i(TAG,"OnMapReady");
         mMap = googleMap;
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         timer_allowed = sharedPref.getBoolean("key_pref_timer",false);
                 //getString(SettingsActivity.key_pref_timer, "");
         Log.i("shareduserpreferences",String.valueOf(timer_allowed));
@@ -559,7 +543,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     v.vibrate(200);
                     marker.remove();
                     total_num_of_markers--;
-                    if (total_num_of_markers==0&&(difficulty.equals("Easiest")||difficulty.equals("Easy"))) {
+                    if (sharedPref.getBoolean("key_pref_hints",true)&&total_num_of_markers==0&&(difficulty.equals("Easiest")||difficulty.equals("Easy"))) {
                         Intent intent = new Intent(MapsActivity.this, WinGameActivity.class);
                         intent.putExtra("num",num);
                         intent.putExtra("artist",artist);
@@ -567,7 +551,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         intent.putExtra("url",url);
                         intent.putExtra("difficulty",difficulty);
                         startActivity(intent);
-
                     }
                 }
                 else {

@@ -11,9 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     MediaPlayer mediaPlayer;
