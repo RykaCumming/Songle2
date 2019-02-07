@@ -13,7 +13,6 @@ public class ScrollingActivityTest {
     @Test
     public void spaces() throws Exception {
         String correct_result = "*** **** ***** ***** * ";
- //       assertTrue(correct_result,s.spaces("red blue green black p "));
+        assertTrue(correct_result.equals(s.spaces("red blue green black p ")));
     }
-
 }

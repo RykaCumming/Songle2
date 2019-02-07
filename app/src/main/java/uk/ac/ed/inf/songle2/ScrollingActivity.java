@@ -129,15 +129,17 @@ public class ScrollingActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 final SharedPreferences sharedPref = getSharedPreferences("mySettings",MODE_PRIVATE);
                 final String kml_url_of_saved_data= sharedPref.getString(parsedresult.get(position).getNumber()+"_kml_url",null);
+        //^ e.g. key "03_kml_url" corresponds to the kml file that has saved data on it for song 03. Only one of the 5 maps will have saved data and this will return the url for it
                 final String parsedresultstring = parsedresult.get(position).getNumber() + "|||" +
                         parsedresult.get(position).getArtist() + "|||" +
                         parsedresult.get(position).getTitle() + "|||" +
                         parsedresult.get(position).getLink();
+        //^  The entry, with each part concatenated together with "|||" in between to allow splitting.
                 final SharedPreferences sharedPref2 = PreferenceManager.getDefaultSharedPreferences(ScrollingActivity.this);
                 boolean timer_allowed = sharedPref2.getBoolean("key_pref_timer",false);
 
                 if (sharedPref.getStringSet(parsedresult.get(position).getNumber(), null)!=null &&!timer_allowed) {
-
+        //^ Time Attack mode is off AND the selected song has previously stored data
                     new AlertDialog.Builder(ScrollingActivity.this)
                             .setMessage("You have previously stored data on this song")
                             .setCancelable(true)
@@ -151,7 +153,7 @@ public class ScrollingActivity extends AppCompatActivity {
                             })
                             .setNegativeButton("New Game", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    sharedPref.edit().remove(parsedresult.get(position).getNumber()).commit();; // The song number corresponding to the position on listview e.g. "04"
+                                    sharedPref.edit().remove(parsedresult.get(position).getNumber()).commit();
                                     sharedPref.edit().remove(parsedresult.get(position).getNumber()+"_kml_url").commit();
                                     Intent intent = new Intent(ScrollingActivity.this, FivePageActivity.class);
                                     intent.putExtra("ScrollingActivity", parsedresultstring);
@@ -161,6 +163,7 @@ public class ScrollingActivity extends AppCompatActivity {
                             .show();
                 }
                 else if((sharedPref.getStringSet(parsedresult.get(position).getNumber(), null)!=null)&&timer_allowed)
+                //^ There IS saved data and time attack mode is set to ON. Informs the user they must delete previous data on this map to do that
                 {
                     new AlertDialog.Builder(ScrollingActivity.this)
                             .setMessage("Timed Attack mode can only be played if you delete your previous data for this map. If you have already completed this song, however, this will still be kept track of. Is this ok?")
@@ -177,7 +180,7 @@ public class ScrollingActivity extends AppCompatActivity {
                             .setNegativeButton("No", null)
                             .show();
                 }
-                else {
+                else { //there is no data and the moe is time attack mode. proceed as normal
                     Intent intent = new Intent(ScrollingActivity.this, FivePageActivity.class);
                     intent.putExtra("ScrollingActivity", parsedresultstring);
                     startActivity(intent);

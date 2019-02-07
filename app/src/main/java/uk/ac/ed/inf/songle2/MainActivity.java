@@ -13,7 +13,8 @@ import android.util.Log;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
-    MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
+    public static boolean shouldPlay=false;
     @Override
     public void onBackPressed()
     {
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         boolean MUSIC_ALLOWED = settings.getBoolean("key_pref_music",true);
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bensoundukulele);
-        if (MUSIC_ALLOWED){
+        if (MUSIC_ALLOWED&&!mediaPlayer.isPlaying()){
             mediaPlayer.start();
         }
 
@@ -50,15 +51,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mediaPlayer.isPlaying())
-        mediaPlayer.stop();
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mediaPlayer.release();
-    }
+        if (mediaPlayer.isPlaying()){
+             mediaPlayer.stop();
+             mediaPlayer.release();
+        }
 
+    }
     public void sendMessage(View view) {
             Intent intent = new Intent(this, NetworkActivity.class);
             intent.putExtra("file", "http://www.inf.ed.ac.uk/teaching/courses/selp/data/songs/songs.xml");
@@ -66,10 +64,12 @@ public class MainActivity extends AppCompatActivity {
     }
     public void HowToPlayMessage(View view) {
         Intent intent = new Intent(this, HowToPlayActivity.class);
+        shouldPlay=true;
         startActivity(intent);
     }
     public void SettingsMessage(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
+
         startActivity(intent);
     }
 

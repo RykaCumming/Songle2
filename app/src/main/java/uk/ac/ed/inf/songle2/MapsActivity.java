@@ -213,6 +213,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
             }
+            //If more than 3 songs have ben guessed, add a song into the mix
             else if (num_of_songs_data.getString("3_or_more_songs",null)!=null) {
                 Random random = new Random();
                 int one_or_two = random.nextInt(2) + 1;
@@ -225,6 +226,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
             }
+            //If more than 15 songs have ben guessed, add the 3rd song into the mix
             else if (num_of_songs_data.getString("15_or_more_songs",null)!=null) {
                 Random random = new Random();
                 int one_or_two_or_three = random.nextInt(3) + 1;
@@ -327,11 +329,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (separatenums.length>1) { //avoid index out of bounds
                 words[i] = separatenums[1].split("[^\\w'-]+"); //split on everything except alphanumerics and ' and -
             }
-//            if (i>=35 &&i<=40 &&words[i].length>=3) {
-//                Log.i("finaltest2",words[i][0]);
-//                Log.i("finaltest2",words[i][1]);
-         //       Log.i("finaltest2",words[i][2]);
-//            }
         }
         for (Marker marker :mMarkers)
         {
@@ -342,10 +339,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             int i = Integer.parseInt(pair[0])-1;
             int j = Integer.parseInt(pair[1])-1;
             String theword = words[i][j];
-//            Log.i("theword",words[i][j]);
             marker.setSnippet(theword);
-//            Log.i("test5",marker.getTag().toString());
-//            Log.i("test5",marker.getSnippet());
         }
     //code below removes the markers which have already been collected on a previously saved playthrough
         if (global_saved_words!=null) { //if there is previous data.
@@ -567,13 +561,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         try { //Visualise current position with small blue circle
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             mMap.setMyLocationEnabled(true);

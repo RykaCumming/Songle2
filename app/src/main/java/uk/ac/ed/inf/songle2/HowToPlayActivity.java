@@ -15,7 +15,10 @@ public class HowToPlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_how_to_play);
     }
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
     public void sendMessage(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

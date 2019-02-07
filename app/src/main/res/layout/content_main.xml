@@ -37,7 +37,7 @@
         android:layout_height="64dp"
         android:layout_marginLeft="92dp"
         android:layout_marginTop="80dp"
-        android:fontFamily="@font/luckiest_guy"
+        android:fontFamily="@font/press_start_ptwo"
         android:gravity="center"
         android:text="SONGLE"
         android:textColor="@android:color/holo_orange_dark"
@@ -47,7 +47,7 @@
         android:textSize="45sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:fontFamily="@font/luckiest_guy"
+        tools:fontFamily="@font/press_start_ptwo"
         tools:textSize="45sp" />
 
     <Button

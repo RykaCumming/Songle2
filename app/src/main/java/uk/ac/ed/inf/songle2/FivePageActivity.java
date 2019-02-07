@@ -23,25 +23,14 @@ import android.widget.TextView;
 
 public class FivePageActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
-    public static String songno="";
-    public static String glob_artist="";
-    public static String glob_title="";
-    public static String url="";
-    public static String global_entry;
+    private  String songno="";
+    private  String glob_artist="";
+    private  String glob_title="";
+    private  String url="";
+    private  String global_entry;
 
 
     @Override
